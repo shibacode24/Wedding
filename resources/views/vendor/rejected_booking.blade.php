@@ -1,31 +1,12 @@
 @extends('vendor.layout')
 @section('content')
-    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <div class="page-content-wrap">
 
-        <!--    <div class="row">
-                             <div class="panel-body" style="padding:1px 5px 2px 5px;">
-                           
-                            <div class="col-md-12" style="margin-top:5px;">
-                                    <label style="color:#000; background-color:#FFCC00; width:7%; height:25px; padding-top:5px;margin-top: 1vh;" align="center"><span class=""></span> <strong>Project Entry</strong></label>
-                                       
-                                  
-                                <a href="added_project_entry.html"> <button id="on" type="button" class="btn mjks"
-                                    style="color:#FFFFFF; height:30px; width:auto;background-color: #009999;"><i
-                                        class="fa fa-plus"></i>Added Project Entry</button>
-                            </a>
-                    </div>
-                                </div>
-                           
-                             </div>-->
 
         <div class="row">
             <div class="panel-body" style="padding:1px 5px 2px 5px;">
 
                 <div class="col-md-12" style="margin-top:5px;">
-                    {{-- <label style="color:#000; background-color:#FFCC00; width:7%; height:25px; padding-top:5px;margin-top: 1vh;" align="center"><span class=""></span> <strong>Project Entry</strong></label> --}}
-
-
 
                 </div>
             </div>
@@ -37,7 +18,7 @@
                 <h6 class="panel-title"
                     style="color:#FFFFFF; background-color:#5e5a5a; width:100%;height: 50%; font-size:12px; padding:7px;"
                     align="center">
-                    <i class="fa fa-file-text"> &nbsp;<b style="font-family: 'Open Sans', sans-serif;">Confirm Booking</b>
+                    <i class="fa fa-file-text"> &nbsp;<b style="font-family: 'Open Sans', sans-serif;">Rejected Booking</b>
                     </i>
                 </h6>
 
@@ -57,92 +38,33 @@
                                 <th>Time Slot</th>
                                 <th>Wedding Venue Type</th>
                                 <th>Price</th>
-                                <th>Advance</th>
-                                <th>Remaining</th>
                                 <th>Guest</th>
+                                <th>Reason</th>
                                 <th>Status</th>
-                                {{-- <th>Action</th> --}}
                             </tr>
                         </thead>
                         {{-- @json($approve_booking) --}}
                         <tbody>
-                            @foreach ($approve_booking as $approve_bookings)
+                            @foreach ($rejected_booking as $rejected_bookings)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ date('d-m-Y', strtotime($approve_bookings->date)) }}</td>
-                                    <td>{{ $approve_bookings->name }}</td>
-                                    <td>{{ $approve_bookings->contact_no }}</td>
-                                    <td>{{ $approve_bookings->time_slot }}</td>
-                                    <td>{{ $approve_bookings->categoryname->category ?? '' }}</td>
-                                    {{-- @php
-                                $time_slot = json_decode($approve_bookings->time_slot);
-                                $amenities_for_booking = json_decode($approve_bookings->amenities_for_booking);
-
-                            @endphp
-
-                            @if (is_array($time_slot))
-
-                                @foreach ($time_slot as $index => $time)
-                                <td>{{$time}}</td>
-                                @endforeach
-                                @endif
+                                    <td>{{ date('d-m-Y', strtotime($rejected_bookings->date)) }}</td>
+                                    <td>{{ $rejected_bookings->name }}</td>
+                                    <td>{{ $rejected_bookings->contact_no }}</td>
+                                    <td>{{ $rejected_bookings->time_slot }}</td>
+                                    <td>{{ $rejected_bookings->categoryname->category ?? '' }}</td>
+                                 
+                                    <td> {{ $rejected_bookings->price }}
+                                    </td>
                                 
-                                @if (is_array($amenities_for_booking))
-
-                                @foreach ($amenities_for_booking as $index => $amenities_for_bookings)
-                                <td>{{$amenities_for_bookings}}</td>
-                                @endforeach
-                                @endif --}}
-                                    {{-- <td>{{ $approve_bookings->price }}
-                                        <span> <a><i class='bx bx-edit'></i></span>
-                                    </td> --}}
-                                    <td> <span
-                                            id="price-{{ $approve_bookings->booking_id }}">{{ $approve_bookings->price }}</span>
-                                        <span>
-                                            <a href="javascript:void(0);" class="edit-price"
-                                                data-id="{{ $approve_bookings->booking_id }}"
-                                                data-price="{{ $approve_bookings->price }}"
-                                                data-name="{{ $approve_bookings->name }}">
-                                                <i class='bx bx-edit'></i>
-                                            </a>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span id="advance-{{ $approve_bookings->booking_id }}">
-                                            {{ $approve_bookings->advance ?? 0 }}
-                                        </span>
-                                        <span>
-                                            <a href="javascript:void(0);" class="edit-advance"
-                                                data-id="{{ $approve_bookings->booking_id }}"
-                                                data-advance="{{ $approve_bookings->advance }}"
-                                                data-name="{{ $approve_bookings->name }}"
-                                                data-price="{{ $approve_bookings->price }}">
-                                                <i class='bx bx-edit'></i>
-                                            </a>
-                                        </span>
-                                    </td>
-                                    {{-- @if ($approve_bookings->advance == null)
-                                        <td>0</td>
-                                    @else --}}
-                                    <td>
-                                        <span class="remaining-{{ $approve_bookings->booking_id }}">
-                                            {{ $approve_bookings->price - $approve_bookings->advance}}
-                                        </span>
-                                    </td>
-                                    {{-- @endif --}}
-
-                                    <td>{{ $approve_bookings->guest }}</td>
+                                    <td>{{ $rejected_bookings->guest }}</td>
+                                    <td>{{ $rejected_bookings->remark ??'N/A' }}</td>
 
                                     <td> <button
-                                            style="background-color:#10af23; border:none; max-height:25px;color:#FFFFFF"
-                                            type="button" class="btn btn-info">Approved</button>
+                                            style="background-color:#ee0e0e; border:none; max-height:25px;color:#FFFFFF"
+                                            type="button" class="btn btn-info">Rejected</button>
                                     </td>
 
-                                    {{-- <td>
-                                    <!-- <button data-toggle="modal" data-target="#popup3" style="background-color:#1abc3d; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;" type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="View"><i class="fa fa-eye" style="margin-left:5px;"></i></button> -->
-                                    <button type="button" class="btn btn-sm btn-success" >Approve</button>
-                                    <!-- <button style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;" type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash-o" style="margin-left:5px;"></i></button> -->
-                                </td> --}}
 
                                 </tr>
                             @endforeach
@@ -293,12 +215,10 @@
                         $('#price-' + response.id).text(response.new_price);
                         $('#advance-' + response.id).text(response.advance);
                         var price = parseFloat($('#price-' + response.id).text());
-                        var advance = parseFloat($('#advance-' + response.id).text());
-                        var remaining = price - advance;
+                        // var advance = parseFloat($('#advance-' + response.id).text());
+                        // var rem = price - advance;
 
-                // Update the remaining amount in the UI
-                $('.remaining-' + response.id).text(remaining); 
-                        console.log(remaining);
+                        // console.log(rem);
 
                         // Update the data-price attribute of the edit button with the new price
                         $('.edit-price[data-id="' + response.id + '"]').data('price', response
@@ -360,11 +280,18 @@
     $('.edit-advance').on('click', function() {
         var id1 = $(this).data('id');
         var advance = parseFloat($(this).data('advance'));
-      
+        var price = parseFloat($(this).data('price'));
+        
+        // Calculate the remaining amount
+        var remaining = price - advance;
 
+        // Set the initial values in the modal
         $('#booking_id1').val(id1);
         $('#advance').val(advance);
 
+        // Update the remaining amount display if needed
+        $('#remaining').text('Remaining: ' + remaining); // Ensure you have this element in your modal
+        
         // Show the modal
         $('#editAdvance').modal('show');
     });
@@ -378,18 +305,19 @@
             method: 'POST',
             data: formData,
             success: function(response) {
-         
-                $('#price-' + response.id).text(response.price);
+                // Update the advance amount in the table
                 $('#advance-' + response.id).text(response.advance);
-
+                
+                // Fetch the price again
+                var price = parseFloat($('#price-' + response.id).attr('price')); // Ensure price is fetched correctly
                 var updatedAdvance = parseFloat(response.advance);
-                var price = parseFloat(response.price);
-
+                
                 // Calculate the remaining amount
                 var remaining = price - updatedAdvance;
-                console.log(remaining);
+
                 // Update the remaining amount in the UI
-                $('.remaining-' + response.id).text(remaining); 
+                $('#remaining-' + response.id).text(remaining); // Ensure this element exists in your HTML
+
                 // Hide the modal
                 $('#editAdvance').modal('hide');
             },

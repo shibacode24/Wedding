@@ -22,6 +22,8 @@ class Booking extends Model
         'guest',
         'remark',
         'status',
+        'price',
+        'advance'
     ];
 
     public function city()
@@ -38,5 +40,11 @@ class Booking extends Model
     {
     return $this->hasOne(Category::class,'id','amenities_for_booking');
     }
+
+    public function hall_name()
+    {
+    return $this->hasOne(AddListing::class,'id','listing_id');
+    }
+
 }
 

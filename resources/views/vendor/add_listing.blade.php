@@ -42,14 +42,20 @@
                                     <div class="col-md-3">
                                         <label>City</label>
                                         <!-- <input type="text" class="form-control" placeholder="" value=""> -->
-                                        <select class="form-control" name="location_city">
+                                        <select class="form-control" name="location_city" id="select_city">
                                             <option disabled selected>Select</option>
+                                            <option value="other">Other</option>
                                             @foreach ($city as $citys)
                                                 <option value="{{ $citys->id }}"
                                                     @if (old('location_city') == $citys->id) selected @endif>{{ $citys->city }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                    </div>
+                                    <div class="col-md-3" id="other_city">
+                                        <label>Add City</label>
+                                        <input type="text" name="other_city" class="form-control"
+                                                    placeholder="" value="">
                                     </div>
                                     <div class="col-md-5">
                                         <label>Address for google map</label>
@@ -671,6 +677,16 @@
 
     <script>
         $(document).ready(function() {
+            $('#other_city').hide();
+            $('#select_city').change(function() {
+                console.log($(this).val());
+            if ($(this).val() == 'other') {
+                $('#other_city').show(); // Show the div if 'other' is selected
+            } else {
+                $('#other_city').hide(); // Hide the div if any other option is selected
+            }
+        });
+
             $(".add-row").click(function() {
 
                 var amenities_for_booking = $('#amenities_for_booking').val();

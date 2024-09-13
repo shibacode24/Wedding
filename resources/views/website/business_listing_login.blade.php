@@ -45,6 +45,34 @@
     width: 34px;
     height: 34px;
     }
+
+    #otp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px auto;
+}
+.inputs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+}
+.inputOtp {
+  width: 30px;
+  height: 30px;
+  margin: 0 4px;
+  border: none;
+  border-bottom: 2px solid #483d8b;
+  background: transparent;
+  font-size: 18px;
+  text-align: center;
+}
+.inputOtp:focus {
+  border-bottom: 3px solid orange;
+  outline: none;
+}
 </style>
 
     <body>
@@ -209,12 +237,24 @@
                 <div class="verification-code">
                     <label class="control-label" style="color:red; font-size: 24px;">Verification
                         Code</label>
-                    <div class="verification-code--inputs">
+                    {{-- <div class="verification-code--inputs">
                         <input type="text" id="otp11" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;"/>
                         <input type="text" id="otp22" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
                         <input type="text" id="otp33" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
                         <input type="text" id="otp44" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
-                    </div>
+                    </div> --}}
+                    <section id="otp">
+                        <div class="inputs">
+                          <section id="otp">
+                   <div class="inputs">
+                          <input type="text" inputmode="numeric" id="otp11" maxlength="1" class="inputOtp" value="" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;" />
+                          <input type="text" inputmode="numeric" id="otp22" maxlength="1" class="inputOtp" value="" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;" />
+                          <input type="text" inputmode="numeric" id="otp33" maxlength="1" class="inputOtp" value="" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;" />
+                          <input type="text" inputmode="numeric" id="otp44" maxlength="1" class="inputOtp" value="" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;" />
+                        </div>
+                      </section>
+                        </div>
+                      </section>
                     <button type="button" class="button border fw margin-top-10" name="register"
                         onclick="verifyOTPbusi()" value="Register">Verify </button>
                     <input type="hidden" id="verificationCode" />
@@ -398,5 +438,34 @@
                 overlay.style.display = 'none';
             }
         </script>
+        <script>
+          function otp() {
+  let inputs = Array.from(document.getElementsByClassName("inputOtp"));
+  inputs.forEach((f) =>
+    f.addEventListener("keyup", (e) => {
+      let val = e.target.value;
+      const target = e.target;
+      const key = e.key.toLowerCase();
+
+      if (key == "backspace" || key == "delete") {
+        target.value = "";
+        const prev = target.previousElementSibling;
+        if (prev) {
+          prev.focus();
+        }
+        return;
+      }
+      if (/[0-9]/.test(val)) {
+        let next = e.target.nextElementSibling;
+        if (next) next.focus();
+      } else {
+        alert("Invalid Input");
+        e.target.value = "";
+      }
+    })
+  );
+}
+otp();
+            </script>
 
     @stop

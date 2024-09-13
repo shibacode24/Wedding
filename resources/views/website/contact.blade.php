@@ -80,16 +80,19 @@
 		  <div class="utf_box_widget margin-bottom-20" style="display:inherit; margin-top:0px; background-color:#f4f4f5;">
                                 <h3>Phone</h3>
                                 <h4 style="padding-bottom:7px; color: #000000;">We are always there for you.</h4>
-                                <a href="tel:+919766658802 " style="border: 1px solid; border-color: #ec3323; border-radius: 4px; padding:8px;"><b><i class="fa fa-phone-square" aria-hidden="true "></i> +91 97666 58802</b></a>
-                                <a href="tel:+919730158802" style="border: 1px solid; border-color: #ec3323; border-radius: 4px; padding:8px;"><b><i
-                                    class="fa fa-phone-square " aria-hidden="true "></i> +91 97301 58802</b></a>
+                                <div style="display:inline-block">
+                                <a class="button border" href="tel:+919766658802 " style="border: 1px solid; border-color: #ec3323; border-radius: 4px;color:#000;"><b><i class="fa fa-phone-square" aria-hidden="true "></i> +91 97666 58802</b></a>
+                               <span> <a class="button border" href="tel:+919730158802" style="border: 1px solid; border-color: #ec3323; border-radius: 4px; color:#000;"><b><i
+                                    class="fa fa-phone-square " aria-hidden="true "></i> +91 97301 58802</b>
+                                </a></span>
+          </div>
                             </div>
 
 
                             <div class="utf_box_widget margin-bottom-20" style="display:inherit; margin-top:0px; background-color:#f4f4f5;">
                                 <h3>Email</h3>
                                 <h4 style="padding-bottom:7px; color: #000000;">Our support team will get back to you soon.</h4>
-                                <a href="mailto:zheptoursandtravels@gmail.com" style="border: 1px solid; border-color: #ec3323; border-radius: 4px; padding:8px;"><b><i class="fa fa-envelope-o " aria-hidden="true ">                                   </i> bookmyweddinghall@gmail.com</b></a>
+                                <a class="button border" href="mailto:zheptoursandtravels@gmail.com" style="border: 1px solid; border-color: #ec3323; border-radius: 4px;  color:#000;"><b><i class="fa fa-envelope-o " aria-hidden="true ">                                   </i> bookmyweddinghall@gmail.com</b></a>
                             </div>
 		  
 		

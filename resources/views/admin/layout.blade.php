@@ -117,7 +117,7 @@ background-color:#006699;
             {{-- ------------------------------------------- Approve Model ------------------------------------------------ --}}
 
             <div class="modal" id="customModal" style="width:65% !important; margin-left:15%;">
-                <div class="modal-dialog" style="width:65% !important; margin-left:15%;">
+                <div class="modal-dialog" style="width:65% !important; margin-left:15%;z-index:100000px">
                     <div class="modal-content">
                         <!-- Modal Header -->
                         <div class="modal-header">

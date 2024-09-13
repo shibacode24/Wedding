@@ -3,28 +3,28 @@
 
     <div class="page-content-wrap">
         <!-- <div class="page-content-wrap">
-                     -->
-		
-		<div class="row">  
-         <div class="panel-body" style="padding:1px 5px 2px 5px;">
-       
-            <div class="col-md-12" style="margin-top:5px;">
-                {{-- <label style="color:#000; background-color:#FFCC00; width:7%; height:25px; padding-top:5px;margin-top: 1vh;" align="center"><span class=""></span> <strong>Project Entry</strong></label> --}}
-                   
-              
-                             
-</div>
-            </div> 
-       
-         </div>
-		
+                                 -->
+
+        <div class="row">
+            <div class="panel-body" style="padding:1px 5px 2px 5px;">
+
+                <div class="col-md-12" style="margin-top:5px;">
+                    {{-- <label style="color:#000; background-color:#FFCC00; width:7%; height:25px; padding-top:5px;margin-top: 1vh;" align="center"><span class=""></span> <strong>Project Entry</strong></label> --}}
+
+
+
+                </div>
+            </div>
+
+        </div>
+
         <div class="row">
             <div class="col-md-12" style="margin-top:5px;">
                 <label style="color:#000; background-color:#FFCC00; width:7%; height:25px; padding-top:5px;margin-top: 1vh;"
                     align="center"><span class="fa fa-desktop"></span> <strong>Masters</strong></label>
 
 
-                <a href="city_master.html"> <button id="on" type="button" class="btn mjks"
+                <a href="{{ route('index') }}"> <button id="on" type="button" class="btn mjks"
                         style="color:#FFFFFF; height:30px; width:auto;background-color: #993800;"><i
                             class="fa fa-database"></i>Masters</button>
                 </a>
@@ -39,11 +39,10 @@
                     @csrf
                     <div class="col-md-2">
                         <label class="control-label">Add City<font color="#FF0000">*</font></label>
-                        <input type="text" class="form-control" id="city" name="city_name" placeholder="" onclick="initAutocomplete()"/>
-                        <input type="hidden" class="form-control" id="longitude" name="longitude"
-                                               readonly required>
-                    <input type="hidden" class="form-control" id="latitude" name="latitude"
-                                               readonly required>
+                        <input type="text" class="form-control" id="city" name="city_name" placeholder=""
+                            onclick="initAutocomplete()" />
+                        <input type="hidden" class="form-control" id="longitude" name="longitude" readonly required>
+                        <input type="hidden" class="form-control" id="latitude" name="latitude" readonly required>
                     </div>
 
                     <div class="col-md-2" style="margin-top:15px;">
@@ -78,7 +77,9 @@
 
                                             <th>Added City</th>
 
-                                           {{-- <th>Action</th>--}}
+                                            <th>Status</th>
+
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -87,22 +88,35 @@
                                                 <td>{{ $loop->iteration }}</td>
 
                                                 <td>{{ $cities->city }}</td>
+                                                @if ($cities->status == '0')
+                                                    <td>{{ 'Active' }}</td>
+                                                @else
+                                                    <td>{{ 'Inactive' }}</td>
+                                                @endif
 
-                                               {{-- <td>
-                                                     <button data-toggle="modal" value="{{ $cities->id }}"
+                                                <td>
+                                                    {{-- <button data-toggle="modal" value="{{ $cities->id }}"
                                                         city_name="{{ $cities->city }}" data-target="#popup13"
                                                         style="background-color:#3399ff; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
                                                         type="button" class="btn btn-info editbtn_city"
                                                         data-toggle="tooltip" data-placement="top" title="Edit"><i
-                                                            class="fa fa-edit" style="margin-left:5px;"></i></button> 
-                                                    <a href="{{ route('city_destroy', $cities->id) }}">
+                                                            class="fa fa-edit" style="margin-left:5px;"></i></button>  --}}
+                                                    {{-- <a href="{{ route('city_destroy', $cities->id) }}">
                                                         <button
                                                             style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
                                                             type="button" class="btn btn-info" data-toggle="tooltip"
                                                             data-placement="top" title="Delete"><i class="fa fa-trash-o"
                                                                 style="margin-left:5px;"></i></button>
-                                                    </a>
-                                                </td>--}}
+                                                    </a> --}}
+
+                                                    <label class="switch switch-small label_change" id="{{ $cities->id }}"
+                                                        @if ($cities->status == '0') checked value="1" @else value="0" @endif>
+                                                        <input type="checkbox"
+                                                            @if ($cities->status == '0') checked @endif>
+                                                        <span class="slider round"></span>
+                                                    </label>
+
+                                                </td>
                                             </tr>
                                         @endforeach
 
@@ -133,7 +147,8 @@
                                 <div class="col-md-12">
                                     <form action="{{ route('update_city') }}" method="post">
                                         @csrf
-                                        <input type="hidden" value="" id="city_id" name="city_id" onclick="initAutocomplete1()" />
+                                        <input type="hidden" value="" id="city_id" name="city_id"
+                                            onclick="initAutocomplete1()" />
                                         <div class="col-md-6">
                                             <label class="control-label"> City<font color="#FF0000">*</font></label>
                                             <input type="text" class="form-control" id="city_name" name="city_name"
@@ -214,13 +229,16 @@
                                                         type="button" class="btn btn-info edit_category_btn"
                                                         data-toggle="tooltip" data-placement="top" title="Edit"><i
                                                             class="fa fa-edit" style="margin-left:5px;"></i></button>
-                                                    <a href="{{ route('category_destroy', $categorys->id) }}">
+                                                    <a href="{{ route('category_destroy', $categorys->id) }}"
+                                                        onclick="return confirmDelete()">
                                                         <button
                                                             style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
                                                             type="button" class="btn btn-info" data-toggle="tooltip"
                                                             data-placement="top" title="Delete"><i class="fa fa-trash-o"
                                                                 style="margin-left:5px;"></i></button>
                                                     </a>
+                                                    {{-- <button  onclick="openCustomModal('{{route('category_destroy',$categorys->id)}}')" id="customModal"
+                                                        style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;" type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash-o" style="margin-left:5px;"></i></button> --}}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -330,7 +348,8 @@
                                                         type="button" class="btn btn-info edit_aminities_btn"
                                                         data-toggle="tooltip" data-placement="top" title="Edit"><i
                                                             class="fa fa-edit" style="margin-left:5px;"></i></button>
-                                                    <a href="{{ route('aminities_destroy', $aminitiess->id) }}">
+                                                    <a href="{{ route('aminities_destroy', $aminitiess->id) }}"
+                                                        onclick="return confirm('Are you sure you want to delete this?')">
                                                         <button
                                                             style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
                                                             type="button" class="btn btn-info" data-toggle="tooltip"
@@ -433,31 +452,32 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-            
+
                                         @foreach ($slot_category as $slot_categorys)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
 
-                                            <td>{{ $slot_categorys->slot_category }}</td>
+                                                <td>{{ $slot_categorys->slot_category }}</td>
 
-                                            <td>
-                                                <button data-toggle="modal" value="{{ $slot_categorys->id }}"
-                                                    slot_category_name="{{ $slot_categorys->slot_category }}"
-                                                    data-target="#popup11"
-                                                    style="background-color:#3399ff; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
-                                                    type="button" class="btn btn-info edit_slot_category_btn"
-                                                    data-toggle="tooltip" data-placement="top" title="Edit"><i
-                                                        class="fa fa-edit" style="margin-left:5px;"></i></button>
-                                                <a href="{{ route('slot_category_destroy', $slot_categorys->id) }}">
-                                                    <button
-                                                        style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
-                                                        type="button" class="btn btn-info" data-toggle="tooltip"
-                                                        data-placement="top" title="Delete"><i class="fa fa-trash-o"
-                                                            style="margin-left:5px;"></i></button>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                                <td>
+                                                    <button data-toggle="modal" value="{{ $slot_categorys->id }}"
+                                                        slot_category_name="{{ $slot_categorys->slot_category }}"
+                                                        data-target="#popup11"
+                                                        style="background-color:#3399ff; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
+                                                        type="button" class="btn btn-info edit_slot_category_btn"
+                                                        data-toggle="tooltip" data-placement="top" title="Edit"><i
+                                                            class="fa fa-edit" style="margin-left:5px;"></i></button>
+                                                    <a href="{{ route('slot_category_destroy', $slot_categorys->id) }}"
+                                                        onclick="return confirm('Are you sure you want to delete this?')">
+                                                        <button
+                                                            style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
+                                                            type="button" class="btn btn-info" data-toggle="tooltip"
+                                                            data-placement="top" title="Delete"><i class="fa fa-trash-o"
+                                                                style="margin-left:5px;"></i></button>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
 
                                     </tbody>
                                 </table>
@@ -483,23 +503,25 @@
                             <div class="panel-body" style="margin-top:5px; margin-bottom:15px;">
                                 <form action="{{ route('update_slot_category') }}" method="post">
                                     @csrf
-                                    <input type="hidden" value="" id="slot_category_id" name="slot_category_id" />
-                                <div class="col-md-12">
+                                    <input type="hidden" value="" id="slot_category_id"
+                                        name="slot_category_id" />
+                                    <div class="col-md-12">
 
-                                    <div class="col-md-6">
-                                        <label class="control-label">Slot Category<font color="#FF0000">*</font>
+                                        <div class="col-md-6">
+                                            <label class="control-label">Slot Category<font color="#FF0000">*</font>
                                             </label>
-                                        <input type="text" class="form-control" id="slot_category_name" name="slot_category_name" placeholder="" />
+                                            <input type="text" class="form-control" id="slot_category_name"
+                                                name="slot_category_name" placeholder="" />
+                                        </div>
+
+                                        <div class="col-md-6" style="margin-top:15px;padding-left: 10px;">
+                                            <button id="on" type="submit" class="btn mjks"
+                                                style="color:#FFFFFF; height:30px; width:auto;"> <i
+                                                    class="fa fa-plus"></i>Update</button>
+
+
+                                        </div>
                                     </div>
-
-                                    <div class="col-md-6" style="margin-top:15px;padding-left: 10px;">
-                                        <button id="on" type="submit" class="btn mjks"
-                                            style="color:#FFFFFF; height:30px; width:auto;"> <i
-                                                class="fa fa-plus"></i>Update</button>
-
-
-                                    </div>
-                                </div>
                                 </form>
                             </div>
                         </div>
@@ -513,24 +535,25 @@
 
             <form action="{{ route('slider') }}" method="post" enctype="multipart/form-data">
                 @csrf
-            <div class="col-md-12" style="margin-top: 2vh;">
-                <div class="col-md-2">
-                    <label class="control-label">Add Slider<font color="#FF0000">*</font></label>
-                    <input type="file" class="form-control" name="slider_name" placeholder="" />
-                </div>
-                <div class="col-md-2" style="margin-top:15px;">
-                    <button id="on" type="submit" class="btn mjks"
-                        style="color:#FFFFFF; height:30px; width:auto;"> <i class="fa fa-plus"></i>ADD</button>
-                    <button id="on" type="button" data-toggle="modal" data-target="#popup7" class="btn mjks"
-                        style="color:#FFFFFF; height:30px; width:auto;"> <i class="fa fa-gear"></i>Manage</button>
+                <div class="col-md-12" style="margin-top: 2vh;">
+                    <div class="col-md-2">
+                        <label class="control-label">Add Slider<font color="#FF0000">*</font></label>
+                        <input type="file" class="form-control" name="slider_name" placeholder="" />
+                    </div>
+                    <div class="col-md-2" style="margin-top:15px;">
+                        <button id="on" type="submit" class="btn mjks"
+                            style="color:#FFFFFF; height:30px; width:auto;"> <i class="fa fa-plus"></i>ADD</button>
+                        <button id="on" type="button" data-toggle="modal" data-target="#popup7"
+                            class="btn mjks" style="color:#FFFFFF; height:30px; width:auto;"> <i
+                                class="fa fa-gear"></i>Manage</button>
 
+                    </div>
                 </div>
-            </div>
             </form>
         </div>
 
     </div>
-   
+
     <div class="modal" id="popup7" tabindex="-1" role="dialog" aria-labelledby="smallModalHead"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -553,34 +576,37 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            
+
                                 @foreach ($slider as $sliders)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
 
-                                    <td>
-                                      <a href="{{asset('public/panel/images/slider_name/'.$sliders->slider)}}" target="_blank">  <img src="{{asset('public/panel/images/slider_name/'.$sliders->slider)}}" style="height:50px;">
-                                       </a>
-                                    </td>
+                                        <td>
+                                            <a href="{{ asset('public/panel/images/slider_name/' . $sliders->slider) }}"
+                                                target="_blank"> <img
+                                                    src="{{ asset('public/panel/images/slider_name/' . $sliders->slider) }}"
+                                                    style="height:50px;">
+                                            </a>
+                                        </td>
 
-                                    <td>
-                                        <button data-toggle="modal" value="{{ $sliders->id }}"
-                                            slider_name="{{ $sliders->slider }}"
-                                            data-target="#popup12"
-                                            style="background-color:#3399ff; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
-                                            type="button" class="btn btn-info edit_slider_btn"
-                                            data-toggle="tooltip" data-placement="top" title="Edit"><i
-                                                class="fa fa-edit" style="margin-left:5px;"></i></button>
-                                        <a href="{{ route('slider_destroy', $sliders->id) }}">
-                                            <button
-                                                style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
-                                                type="button" class="btn btn-info" data-toggle="tooltip"
-                                                data-placement="top" title="Delete"><i class="fa fa-trash-o"
+                                        <td>
+                                            <button data-toggle="modal" value="{{ $sliders->id }}"
+                                                slider_name="{{ $sliders->slider }}" data-target="#popup12"
+                                                style="background-color:#3399ff; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
+                                                type="button" class="btn btn-info edit_slider_btn" data-toggle="tooltip"
+                                                data-placement="top" title="Edit"><i class="fa fa-edit"
                                                     style="margin-left:5px;"></i></button>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                            <a href="{{ route('slider_destroy', $sliders->id) }}"
+                                                onclick="return confirm('Are you sure you want to delete this?')">
+                                                <button
+                                                    style="background-color:#ff0000; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"
+                                                    type="button" class="btn btn-info" data-toggle="tooltip"
+                                                    data-placement="top" title="Delete"><i class="fa fa-trash-o"
+                                                        style="margin-left:5px;"></i></button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
 
                             </tbody>
                         </table>
@@ -610,21 +636,21 @@
                         <form action="{{ route('update_slider') }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" value="" id="slider_id" name="slider_id" />
-                        <div class="col-md-12">
+                            <div class="col-md-12">
 
-                            <div class="col-md-6">
-                                <label class="control-label"> Slider<font color="#FF0000">*</font></label>
-                                <input type="file" class="form-control" name="slider_name" placeholder="" />
+                                <div class="col-md-6">
+                                    <label class="control-label"> Slider<font color="#FF0000">*</font></label>
+                                    <input type="file" class="form-control" name="slider_name" placeholder="" />
+                                </div>
+
+                                <div class="col-md-6" style="margin-top:15px;padding-left: 10px;">
+                                    <button id="on" type="submit" class="btn mjks"
+                                        style="color:#FFFFFF; height:30px; width:auto;"> <i
+                                            class="fa fa-plus"></i>Update</button>
+
+
+                                </div>
                             </div>
-
-                            <div class="col-md-6" style="margin-top:15px;padding-left: 10px;">
-                                <button id="on" type="submit" class="btn mjks"
-                                    style="color:#FFFFFF; height:30px; width:auto;"> <i
-                                        class="fa fa-plus"></i>Update</button>
-
-
-                            </div>
-                        </div>
                         </form>
                     </div>
                 </div>
@@ -637,6 +663,11 @@
 
 @stop
 @section('js')
+    <script>
+        function confirmDelete() {
+            return confirm('Are you sure you want to delete this?');
+        }
+    </script>
     <script>
         $(document).ready(function() {
 
@@ -680,28 +711,56 @@
                 $('#slider_name').val($(this).attr('slider_name'));
                 $('#slider_id').val($(this).attr('value'));
             });
+            $(document).on("click", ".label_change", function(e) {
+                e.preventDefault(); // Prevent default action
+
+                var status = $(this).attr('value');
+                var id = $(this).attr('id');
+
+                // Show a confirmation dialog
+                var userConfirmed = confirm("Are you sure?");
+
+                if (userConfirmed) {
+                    $.ajax({
+                        url: "{{ route('city_status') }}",
+                        data: {
+                            status: status,
+                            id: id
+                        },
+                        success: function(result) {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 200);
+                        }
+                    });
+                }
+            });
+
+
         });
     </script>
-<script>
-    // Load the Google Maps API with the Places library
-    function initAutocomplete() {
-        const autocomplete = new google.maps.places.Autocomplete(document.getElementById('city'));
-        autocomplete.addListener('place_changed', function () {
-            const place = autocomplete.getPlace();
-            if (!place.geometry) {
-                console.error('Place not found: ', place);
-                return;
-            }
-             document.getElementById('latitude').value = place.geometry.location.lat();
-             document.getElementById('longitude').value = place.geometry.location.lng();
+    <script>
+        // Load the Google Maps API with the Places library
+        function initAutocomplete() {
+            const autocomplete = new google.maps.places.Autocomplete(document.getElementById('city'));
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    console.error('Place not found: ', place);
+                    return;
+                }
+                document.getElementById('latitude').value = place.geometry.location.lat();
+                document.getElementById('longitude').value = place.geometry.location.lng();
+            });
+        }
+        // jQuery document ready function
+        $(document).ready(function() {
+            // Your jQuery code goes here
         });
-    }
-    // jQuery document ready function
-    $(document).ready(function () {
-        // Your jQuery code goes here
-    });
-</script>
+    </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1Cz13aBYAbBYJL0oABZ8KZnd7imiWwA4&libraries=places&callback=initAutocomplete" async defer></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1Cz13aBYAbBYJL0oABZ8KZnd7imiWwA4&libraries=places&callback=initAutocomplete"
+        async defer></script>
 
 @stop

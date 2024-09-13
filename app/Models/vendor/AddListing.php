@@ -41,6 +41,7 @@ class AddListing extends Model
         'location_address',
         'price',
         'show_price',
+        'other_city'
 
     ];
 
@@ -68,6 +69,8 @@ class AddListing extends Model
     {
         return $this->hasMany(Review::class,'listing_id','id');
     }
+
+    
 
     // public function WeddingVenueName()
     // {

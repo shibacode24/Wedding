@@ -26,7 +26,8 @@ class AddListingController extends Controller
    {
 
    $aminities = Aminities :: get();
-   $city = City :: get();
+//    $city = City :: get();
+$city = City :: where('status','0')->get();
    $category = Category :: get();
 
    return view('vendor.add_listing',compact('aminities','city','category'));
@@ -57,14 +58,15 @@ class AddListingController extends Controller
         //  'vendor_description' => 'required',
         //  'vendor_price' => 'required',
         //  'vendor_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-         'location_city' => 'required',
+        //  'location_city' => 'required',
          'location_address' => 'required',
      ]);
 // dd($request->all());
        $add_listing = new AddListing();
-
+       
        $add_listing->user_id = Auth::user()->id;
        $add_listing->name = $request->input('name');
+       $add_listing->other_city = $request->input('other_city');
        $add_listing->contact_no = $request->input('contact_no');
        $add_listing->address = $request->input('address');
        $add_listing->email = $request->input('email');
@@ -177,9 +179,41 @@ if (isset($request->vendor_image) && !empty($request->vendor_image))
     ->where('add_listing.user_id',Auth::user()->id)
     ->where('booking.status','1')
     ->leftjoin('listing_amenities','listing_amenities.id','=','booking.amenities_for_booking')
-    ->select('booking.*','add_listing.user_id','listing_amenities.amenity','listing_amenities.price','listing_amenities.capacity','add_listing.id')
+    ->select('booking.*','add_listing.user_id','listing_amenities.amenity','listing_amenities.capacity','add_listing.id','booking.id as booking_id')
     ->get();
     return view('vendor.approve_booking',compact('approve_booking'));
+   }
+
+   public function rejected_booking()
+   {
+    $rejected_booking = Booking::join('add_listing','add_listing.id','=','booking.listing_id')
+    ->where('add_listing.user_id',Auth::user()->id)
+    ->where('booking.status','2')
+    ->leftjoin('listing_amenities','listing_amenities.id','=','booking.amenities_for_booking')
+    ->select('booking.*','add_listing.user_id','listing_amenities.amenity','listing_amenities.capacity','add_listing.id','booking.id as booking_id')
+    ->get();
+    return view('vendor.rejected_booking',compact('rejected_booking'));
+   }
+   
+   public function updatePrice(Request $request)
+   {
+       $booking = Booking::find($request->booking_id);
+       $booking->price = $request->price;
+    //    $booking->advance = $request->advance;
+       $booking->save();
+
+       return response()->json(['id' => $booking->id, 'new_price' => $booking->price]);
+   }
+
+     public function update_advance(Request $request)
+   { 
+    // echo json_encode($request->all());
+    // exit();
+       $booking = Booking::find($request->booking_id);
+       $booking->advance = $request->advance;
+       $booking->save();
+
+       return response()->json(['id' => $booking->id, 'advance' => $booking->advance,'price' => $booking->price]);
    }
    
    public function view_enquiry()
@@ -378,7 +412,7 @@ public function delete_time_slot($id)
         // 'vendor_description' => 'required',
         // 'vendor_price' => 'required|numeric',
         // 'vendor_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'location_city' => 'required',
+        // 'location_city' => 'required',
         'location_address' => 'required',
     ]);
     
@@ -390,6 +424,7 @@ public function delete_time_slot($id)
     $add_listing = AddListing::where('id',$request->id)->first();
 
 $add_listing->name = $request->filled('name') ? $request->input('name') : $add_listing->name;
+$add_listing->other_city = $request->filled('other_city') ? $request->input('other_city') : $add_listing->other_city;
 $add_listing->contact_no = $request->filled('contact_no') ? $request->input('contact_no') : $add_listing->contact_no;
 $add_listing->address = $request->filled('address') ? $request->input('address') : $add_listing->address;
 $add_listing->email = $request->filled('email') ? $request->input('email') : $add_listing->email;

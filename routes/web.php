@@ -23,8 +23,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::view('demo','website.demo')->name('demo');
 
-// Route::view('index','website.index')->name('website_index');
+
+// Route::view('history','website.history')->name('website_history');
 // Route::view('listing_page','website.listing_page')->name('listing_page');
 Route::view('listing_list','website.listing_list')->name('listing_list');
 Route::view('test','website.test')->name('test');
@@ -36,9 +38,9 @@ Route::view('contact','website.contact')->name('contact');
 Route::view('vendor_registration','website.vendor_registration')->name('vendor_registration');
 
  Route::view('business_listing_login','website.business_listing_login')->name('business_listing_login');
-//  Route::view('profile','vendor.profile')->name('profile');
+//  Route::view('view_listing','admin.view_listing')->name('view_listing');
 
-
+Route::view('email','welcome_mail');
  
 Route::get('login_page',[DashboardController::class,'login_page'])->name('login_page');
 Route::post('login_submit',[DashboardController::class,'login_submit'])->name('login_submit');
@@ -55,7 +57,7 @@ Route::get('search',[IndexController::class,'search'])->name('search');
 Route::post('updateReview',[IndexController::class,'updateReview'])->name('updateReview');
 Route::post('send_mail',[IndexController::class,'send_mail'])->name('send_mail');
 Route::get('deleteReview/{id}',[IndexController::class,'deleteReview'])->name('deleteReview');
-
+Route::get('history',[IndexController::class,'history'])->name('history');
 
 //Route::group(['middleware'=>'CheckLogin'],function(){
 
@@ -68,6 +70,7 @@ Route::get('master',[MasterController::class,'index'])->name('index');
 Route::post('city',[MasterController::class,'city_store'])->name('city');
 Route::post('update_city',[MasterController::class,'update_city'])->name('update_city');
 Route::get('city_destroy/{id}',[MasterController::class,'city_destroy'])->name('city_destroy');
+Route::get('city_status',[MasterController::class,'city_status'])->name('city_status');
 
 Route::post('category',[MasterController::class,'category_store'])->name('category');
 Route::post('update_category',[MasterController::class,'update_category'])->name('update_category');
@@ -105,17 +108,20 @@ Route::get('delete_amenity_list/{id}',[AddListingController::class,'delete_ameni
 Route::post('delete_vendory_list', [AddListingController::class, 'delete_vendory_list'])->name('delete.vendory_list');
 // Route::get('/delete_banner_image/{id}/{image}', [AddListingController::class, 'deleteBannerImage'])->name('delete_banner_image');
 Route::post('delete_banner_image', [AddListingController::class, 'deleteBannerImage'])->name('delete_banner_image');
+Route::get('rejected_booking', [AddListingController::class, 'rejected_booking'])->name('rejected_booking');
 
 Route::get('/fetch-booking-data', [AddListingController::class, 'fetchBookingData'])->name('fetchBookingData');
 Route::get('log_out_vendor', [AddListingController::class, 'log_out_vendor'])->name('log_out_vendor');
 Route::get('delete_time_slot/{id}', [AddListingController::class, 'delete_time_slot'])->name('delete_time_slot');
-
+Route::post('update_price', [AddListingController::class, 'updatePrice'])->name('update_price');
+Route::post('update_advance', [AddListingController::class, 'update_advance'])->name('update_advance');
 
 Route::get('all_listing',[ReportController::class,'all_listing'])->name('all_listing');
 Route::get('approve_listing/{id}',[ReportController::class,'approve_listing'])->name('approve_listing');
 Route::get('reject_listing/{id}',[ReportController::class,'reject_listing'])->name('reject_listing');
 Route::get('all_approve_booking',[ReportController::class,'all_approve_booking'])->name('all_approve_booking');
 Route::get('admin_dashboard',[ReportController::class,'dashboard'])->name('admin_dashboard');
+Route::get('view_listing/{id}',[ReportController::class,'view_listing'])->name('view_listing');
 
 
 
@@ -140,4 +146,9 @@ Route::get('user_profile',[RegistrationController::class,'user_profile'])->name(
 Route::post('edit_user_profile',[RegistrationController::class,'edit_user_profile'])->name('edit_user_profile');
 Route::post('checkMobileExist',[RegistrationController::class,'checkMobileExist'])->name('check_mobile_exist');
 
+Route::post('check_login',[RegistrationController::class,'check_login'])->name('check_login');
+Route::get('delete_profile/{id}',[RegistrationController::class,'delete_profile'])->name('delete_profile');
+
+
 //});
+

@@ -98,10 +98,10 @@
                             <th>Business Name</th>
                             <th>Contact No</th>
                             <th>Address</th>
-                            <th>Email</th>
-                            <th>Website Link</th>
+                            {{-- <th>Email</th> --}}
+                            {{-- <th>Website Link</th> --}}
                             <th>Wedding Venue Type</th>
-                            <th>Price</th>
+                            {{-- <th>Price</th> --}}
                             <th>City</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -116,8 +116,8 @@
                                 <td>{{ $all_listings->name }}</td>
                                 <td>{{ $all_listings->contact_no }}</td>
                                 <td>{{ $all_listings->address }}</td>
-                                <td>{{ $all_listings->email }}</td>
-                                <td>{{ $all_listings->website_link }}</td>
+                                {{-- <td>{{ $all_listings->email }}</td> --}}
+                                {{-- <td>{{ $all_listings->website_link }}</td> --}}
                                
                        
               @php
@@ -138,7 +138,7 @@
       $prices = json_decode($all_listings->Price, true); // Convert JSON string to array
   @endphp --}}
   
-  <td>{{ implode(', ', $all_listings->Price) }}</td>
+  {{-- <td>{{ implode(', ', $all_listings->Price) }}</td> --}}
                                 {{-- <<td>{{ implode(', ', $all_listings->capacity)  ?? ['']}}</td> --}}
 
                                 <td>{{ $all_listings->city_name->city ?? '' }}</td>
@@ -173,17 +173,20 @@
                                     </td>
                                @else --}}
                                 <td>
+                                  <a href="{{ route('view_listing', $all_listings->id) }}">
+                                    <button type="button" class="btn btn-primary">View</button>
+                                </a>
                                     {{-- <a href="{{ route('approve_listing', $all_listings->id) }}" onclick=""> --}}
                                         <button
                                         onclick="openCustomModal('{{ route('approve_listing', $all_listings->id) }}')"
                                         id="customModal"
-                                        style="background-color:#10af23; border:none; max-height:25px;"
+                                        style="background-color:#10af23; border:none; max-height:25px;color:#FFFFFF"
                                         type="button" class="btn btn-info">Approve</button>
                                     {{-- </a> --}}
                                         <button
                                         onclick="openCustomModal_reject('{{ route('reject_listing', $all_listings->id) }}')"
                                         id="customModal_reject"
-                                        style="background-color:#d40e0e; border:none; max-height:25px; "
+                                        style="background-color:#d40e0e; border:none; max-height:25px;color:#FFFFFF"; "
                                         type="button" class="btn btn-info">Reject</button>
                                    
                                     

@@ -28,7 +28,7 @@
                     <div class="utf_dashboard_list_box margin-top-0">
                         <h4 class="gray"><i class="sl sl-icon-user"></i> Profile Details</h4>
                         <div class="utf_dashboard_list_box-static">
-                            <div class="edit-profile-photo">
+                            {{-- <div class="edit-profile-photo">
                                 <img src="{{ asset('public/images/photos/' . $data->photo) }}" alt="Admin"
                                     class="rounded-circle p-1 bg-primary" style="width:150px; height:150px;">
                                 <div class="change-photo-btn">
@@ -37,7 +37,22 @@
                                             name="photo" style="padding-top:7px; padding-bottom:25px;" />
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
+                           <a href="{{route('delete_profile',$data->id)}}" onclick="return confirm('Are you sure want to delete this?')"> <div style="margin-left:500px;color:red;"><i class="fa fa-trash"></i></div></a>
+                            @if ($data->photo == null)
+                            <div class="edit-profile-photo"> <img src="{{ asset('public/images/user_profile.jpg') }}" alt=""  style="max-width:100px">
+                                @else
+                                    <div class="edit-profile-photo"> <img src="{{ asset('public/images/photos/' . $data->photo) }}" alt=""  style="max-width:100px">
+                            @endif
+                           
+                                <div class="change-photo-btn" style="width: 50px !important;bottom:-25px;">
+                                  <div class="photoUpload"> <span><i class="fa fa-upload"></i></span>
+                                    <input type="file" name="photo" class="upload" />
+                                  </div>
+                                </div>
+                               
+                              </div>
+                           
                             <div class="my-profile">
                                 <div class="row with-forms">
                                     <div class="col-md-12">

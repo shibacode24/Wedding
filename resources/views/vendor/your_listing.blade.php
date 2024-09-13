@@ -62,7 +62,22 @@
                                 <td>{{$your_listings->email}}</td>
                                 <td>{{$your_listings->google_map_link}}</td>
                                 {{-- <td>{{$your_listings->price}}</td> --}}
-                                <td>{{ucfirst($your_listings->status)}}</td>
+                                @if($your_listings->status == 'approve')
+									  <td> <button
+                                        style="background-color:#10af23; border:none; max-height:25px;color:#FFFFFF"
+                                        type="button" class="btn btn-info">Approved</button>
+                                    </td>
+									@elseif($your_listings->status == 'reject')
+									 <td> <button
+                                        style="background-color:#f11010; border:none; max-height:25px;color:#FFFFFF"
+                                        type="button" class="btn btn-info">Rejected</button>
+                                    </td>
+									@elseif($your_listings->status == 'pending')
+									 <td> <button
+                                        style="background-color:#FF6600; border:none; max-height:25px;color:#FFFFFF"
+                                        type="button" class="btn btn-info">Pending</button>
+                                    </td>
+									@endif
                                 <td>
                                     <a href="{{ route('edit_listing', $your_listings->id) }}"> <button
                                         style="background-color:#3399ff; border:none; max-height:25px; margin-top:-5px; margin-bottom:-5px;"

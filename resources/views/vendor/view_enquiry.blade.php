@@ -29,6 +29,8 @@
                     <thead>
                         <tr>
                             <th>Sr. No.</th>
+                            <th>Booking Date</th>
+
                             <th>Date</th>
                             <th>Name</th>
                             
@@ -46,7 +48,8 @@
                     <tbody>
                         @foreach ($view_enquiry as $view_enquirys)
                         <tr>
-                        <td>{{$loop->iteration}}</td>       
+                        <td>{{$loop->iteration}}</td>    
+                        <td>{{date('d-m-Y h:i',strtotime($view_enquirys->created_at))}}</td>
                         <td>{{date('d-m-Y',strtotime($view_enquirys->date))}}</td>
                         <td>{{$view_enquirys->name}}</td>
                         <td>{{$view_enquirys->contact_no}}</td>

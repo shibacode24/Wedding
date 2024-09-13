@@ -22,6 +22,9 @@ class ListingAmenity extends Model
     return $this->belongsTo(Category::class, 'category_id');
 }
 
-    
+public function category_name()
+{
+    return $this->hasOne(Category::class, 'id' , 'amenity');
+}
 
 }

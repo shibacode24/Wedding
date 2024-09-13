@@ -106,6 +106,12 @@ background-color:#006699;
                     <a href="{{route('view_enquiry')}}" title="View Enquiry"><span class="fa fa-users"> </span>View Enquiry</a>
                 </li>
 
+                <li>
+                    <a href="{{route('rejected_booking')}}" title="Confirm Booking"><span class="fa fa-edit"></span>Rejected
+                        Booking</a>
+
+                </li>
+
                <!-- <li>
                     <a href="{{route('add_listing')}}" title="Masters"><span class="fa fa-list"> </span>Add Listing</a>
                 </li>-->

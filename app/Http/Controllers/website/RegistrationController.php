@@ -8,11 +8,22 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 
 
 class RegistrationController extends Controller
 {
+
+
+   public function check_login()
+   {
+    auth::attempt('token');
+    return view('admin.dashboard');
+
+    // $user = User :: where()
+
+   }
 
 public function storeRegistration(Request $request)
 {
@@ -68,6 +79,7 @@ public function storeRegistration(Request $request)
     // exit();
 
     $registration->save();
+
     Auth::login($registration);
     // Redirect based on user type
     if ($request->user_type === 'user') {
@@ -90,6 +102,44 @@ public function checkUnique(Request $request)
         ]);
     }
 
+// public function login(Request $request)
+// {
+//     // Validation rules
+//     $validator = Validator::make($request->all(), [
+//         'email' => 'required|email',
+//         'password' => 'required',
+//     ]);
+
+//     // Check if validation fails
+//     if ($validator->fails()) {
+//         return redirect()->back()->with('error', 'Please enter username and password');
+//     }
+
+//     // Attempt to authenticate the user
+//     $credentials = $request->only('email', 'password');
+	
+//     if (Auth::attempt($credentials)) {
+//         $user = Auth::user();
+		
+//         if ($user->user_type === 'user') {
+//             return redirect()->back();
+//         } elseif ($user->user_type === 'business') {
+//             return redirect()->route('your_listing');
+//         }
+// 		 elseif ($user->user_type === 'admin') {
+// 			 return redirect()->route('admin_dashboard');
+           
+//         }
+//     }
+
+   
+
+
+//     // User not found or authentication failed
+//     return redirect()->back()->with('error', 'Incorrect username or password');
+// }
+
+
 public function login(Request $request)
 {
     // Validation rules
@@ -100,32 +150,27 @@ public function login(Request $request)
 
     // Check if validation fails
     if ($validator->fails()) {
-        return redirect()->back()->with('error', 'Please enter username and password');
+        return response()->json(['status' => 'error', 'message' => 'Please enter username and password']);
     }
 
     // Attempt to authenticate the user
     $credentials = $request->only('email', 'password');
-	
+
     if (Auth::attempt($credentials)) {
         $user = Auth::user();
-		
+
         if ($user->user_type === 'user') {
-            return redirect()->back();
+            return response()->json(['status' => 'success', 'redirect_url' => url()->previous()]);
         } elseif ($user->user_type === 'business') {
-            return redirect()->route('your_listing');
-        }
-		 elseif ($user->user_type === 'admin') {
-			 return redirect()->route('admin_dashboard');
-           
+            return response()->json(['status' => 'success', 'redirect_url' => route('your_listing')]);
+        } elseif ($user->user_type === 'admin') {
+            return response()->json(['status' => 'success', 'redirect_url' => route('admin_dashboard')]);
         }
     }
 
-
     // User not found or authentication failed
-    return redirect()->back()->with('error', 'Incorrect username or password');
+    return response()->json(['status' => 'error', 'message' => 'Incorrect username or password']);
 }
-
-
 
 
 public function send_mobile_verify_otp(Request $request)
@@ -134,23 +179,23 @@ public function send_mobile_verify_otp(Request $request)
 
     if($contact){
          // Mobile number exists, proceed to send OTP
-     $otp = rand(1000, 9999);
-    $name = 'Sir/Mam';
-   $msg = 'Dear ' . $name . ', Your OTP is ' . $otp . '. Send
-       by WEBMEDIA';
-    $msg = urlencode($msg);
-    // $to = $request->contact;
+//      $otp = rand(1000, 9999);
+//     $name = 'Sir/Mam';
+//    $msg = 'Dear ' . $name . ', Your OTP is ' . $otp . '. Send
+//        by WEBMEDIA';
+//     $msg = urlencode($msg);
+//     // $to = $request->contact;
 
-    $data1 = "uname=habitm1&pwd=habitm1&senderid=WMEDIA&to=" .
-        $contact  . "&msg=" . $msg .
-        "&route=T&peid=1701159196421355379&tempid=1707161527969328476";
-    $ch = curl_init('http://bulksms.webmediaindia.com/sendsms?');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data1);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $result = curl_exec($ch);
-    curl_close($ch);
-    // $otp=1234;
+//     $data1 = "uname=habitm1&pwd=habitm1&senderid=WMEDIA&to=" .
+//         $contact  . "&msg=" . $msg .
+//         "&route=T&peid=1701159196421355379&tempid=1707161527969328476";
+//     $ch = curl_init('http://bulksms.webmediaindia.com/sendsms?');
+//     curl_setopt($ch, CURLOPT_POST, true);
+//     curl_setopt($ch, CURLOPT_POSTFIELDS, $data1);
+//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//     $result = curl_exec($ch);
+//     curl_close($ch);
+    $otp=1234;
 return response()->json(['otp' => $otp]);
 } 
 
@@ -201,22 +246,24 @@ public function send_otp_for_forgot_pass(Request $request)
 
     if($user){
          // Mobile number exists, proceed to send OTP
-     $otp = rand(1000, 9999);
-    $name = 'Sir/Mam';
-   $msg = 'Dear ' . $name . ', Your OTP is ' . $otp . '. Send
-       by WEBMEDIA';
-    $msg = urlencode($msg);
-    // $to = $request->contact;
+//      $otp = rand(1000, 9999);
+//     $name = 'Sir/Mam';
+//    $msg = 'Dear ' . $name . ', Your OTP is ' . $otp . '. Send
+//        by WEBMEDIA';
+//     $msg = urlencode($msg);
+//     // $to = $request->contact;
 
-    $data1 = "uname=habitm1&pwd=habitm1&senderid=WMEDIA&to=" .
-        $contact  . "&msg=" . $msg .
-        "&route=T&peid=1701159196421355379&tempid=1707161527969328476";
-    $ch = curl_init('http://bulksms.webmediaindia.com/sendsms?');
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data1);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $result = curl_exec($ch);
-    curl_close($ch);
+//     $data1 = "uname=habitm1&pwd=habitm1&senderid=WMEDIA&to=" .
+//         $contact  . "&msg=" . $msg .
+//         "&route=T&peid=1701159196421355379&tempid=1707161527969328476";
+//     $ch = curl_init('http://bulksms.webmediaindia.com/sendsms?');
+//     curl_setopt($ch, CURLOPT_POST, true);
+//     curl_setopt($ch, CURLOPT_POSTFIELDS, $data1);
+//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//     $result = curl_exec($ch);
+//     curl_close($ch);
+
+$otp = 1234;
     // return response()->json($otp);
 
  // Store the OTP in the session for later verification
@@ -236,6 +283,7 @@ return response()->json(['otp' => $otp, 'userId' => $user->id]);
 
 public function verify_otp_for_forgot_pass(Request $request)
 {
+    // dd($request->all());
     $enteredOtp = $request->input('enteredOtp');
     $otp = session('otp'); // Retrieve the stored OTP from the session
 
@@ -304,6 +352,16 @@ public function user_profile()
     return redirect()->route('website_index');
    }
 
+
+   public function delete_profile(Request $request)
+   {
+      $user_data = User::where('id',$request->id)->first();
+      $user_data->photo = NULL;
+      $user_data->save();
+      return back();
+
+   }
+
 	public function checkMobileExist(Request $request)  // for ajax dispay
 {
     // dd( $request->input('mobile'));
@@ -317,9 +375,9 @@ public function logout()
 {
     Auth::logout();
 
-    // return redirect('/');
+    return redirect('/');
 
-        return redirect()->back();
+        // return redirect()->back();
 }
 
 }

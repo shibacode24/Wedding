@@ -223,7 +223,7 @@ body {
                            <img src="{{ asset('public/images/photos/'. $data->photo) }}" alt="Admin" class="rounded-circle p-1 bg-primary" width="110">
 							 </div>
                 <div class="form-group" >
-            <input type="file" class="form-control" id="inputFirstName" placeholder="" name="photo"  style="padding-top:7px; padding-bottom:25px;">
+            <input type="file" class="form-control" id="inputFirstName" placeholder="" name=""  style="padding-top:7px; padding-bottom:25px;">
                
 						</div>
 					</div>

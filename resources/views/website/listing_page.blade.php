@@ -32,6 +32,10 @@
         font-family: Arial, sans-serif;
     }
 
+    .error-msg {
+        color: red;
+    }
+
     .popup {
         display: none;
         position: fixed;
@@ -657,14 +661,39 @@
         padding: 0 5px;
         /* Space between stars */
     }
-    .close11-button{
-     color: #ff2222;
-    background-color: #fff;
-    border-radius: 50px;
-    top: 20px;
-    right: 20px;
-    width: 34px;
-    height: 34px;
+
+    .close11-button {
+        color: #ff2222;
+        background-color: #fff;
+        border-radius: 50px;
+        top: 20px;
+        right: 20px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .inputs {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 30px;
+    }
+
+    .inputOtp {
+        width: 30px;
+        height: 30px;
+        margin: 0 4px;
+        border: none;
+        border-bottom: 2px solid #483d8b;
+        background: transparent;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .inputOtp:focus {
+        border-bottom: 3px solid orange;
+        outline: none;
     }
 </style>
 
@@ -706,7 +735,7 @@
                                 <li><a href="{{ route('contact') }}">Contact Us</a></li>
                                 <li><a href="https://bookmyweddinghall.com/#hall1">Vendors</a></li>
                                 @if (Auth::check())
-                                    <li><a href="#">History</a></li>
+                                    <li><a href="{{route('history')}}">History</a></li>
                                 @endif
                             </ul>
                         </nav>
@@ -721,17 +750,21 @@
                             @endif
 
                             @if (Auth::check())
-                                @if (Auth::user()->gender == 'Female')
-                                    <a href="{{ route('user_profile') }}" style=" color:red;"> <img
-                                            src="{{ asset('public/images/female.png') }}"
-                                            style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}</a>
-                                @else
-                                    <a href="{{ route('user_profile') }}" style=" color:red;"> <img
-                                            src="{{ asset('public/images/male.png') }}"
-                                            style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}</a>
-                                @endif
+                            @if (Auth::user()->photo)
+                                <a href="{{ route('user_profile') }}" style="color:red;">
+                                    <img src="{{ asset('public/images/photos/' . Auth::user()->photo) }}" style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}
+                                </a>
+                            @elseif (Auth::user()->gender == 'Female')
+                                <a href="{{ route('user_profile') }}" style="color:red;">
+                                    <img src="{{ asset('public/images/female.png') }}" style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}
+                                </a>
+                            @else
+                                <a href="{{ route('user_profile') }}" style="color:red;">
+                                    <img src="{{ asset('public/images/male.png') }}" style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}
+                                </a>
                             @endif
-
+                        @endif
+                        
 
 
                             @if (Auth::check())
@@ -767,7 +800,7 @@
                             <div class="tab_container alt">
                                 <span class="pop_up_div" id="login_page">
                                     <div class="tab_content" id="tab1" style="display:none;">
-                                        <form method="post" class="login" action="{{ route('login') }}">
+                                        <form method="post" id="loginForm" class="login" action="{{ route('login') }}">
                                             @csrf
                                             <p class="utf_row_form utf_form_wide_block">
                                                 <label for="username">
@@ -841,8 +874,8 @@
                                                 </label>
                                             </p>
 
-                                            <p class="utf_row_form utf_form_wide_block">
-                                                <label for="email">
+                                            <p id="gender-section" class="utf_row_form utf_form_wide_block">
+                                                <label for="gender">
                                                     <select title="Select Gender" name="gender"
                                                         style="padding-left: 15px;padding-bottom:9px;">
                                                         <option>Male</option>
@@ -913,12 +946,28 @@
                                                 src="{{ asset('public/images/cross.png') }}" style="height:25px;"
                                                 alt=""></span>
                                         <div class="otp-container" style="margin-top:15%;">
-                                            <input id="otpInput1" class="otp-input" type="text" maxlength="1" />
+                                            {{-- <input id="otpInput1" class="otp-input" type="text" maxlength="1" />
                                             <input id="otpInput2" class="otp-input" type="text" maxlength="1" />
                                             <input id="otpInput3" class="otp-input" type="text" maxlength="1" />
-                                            <input id="otpInput4" class="otp-input" type="text" maxlength="1" />
+                                            <input id="otpInput4" class="otp-input" type="text" maxlength="1" /> --}}
+                                            <section id="otp_type">
+                                                <div class="inputs">
+                                                    <input type="text" inputmode="numeric" id="otpInput1"
+                                                        maxlength="1" class="inputOtp"
+                                                        style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important;" />
+                                                    <input type="text" inputmode="numeric" id="otpInput2"
+                                                        maxlength="1" class="inputOtp"
+                                                        style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                                    <input type="text" inputmode="numeric" id="otpInput3"
+                                                        maxlength="1" class="inputOtp"
+                                                        style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                                    <input type="text" inputmode="numeric" id="otpInput4"
+                                                        maxlength="1" class="inputOtp"
+                                                        style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                                </div>
+                                            </section>
                                         </div>
-                                        <p style="text-align: center;">Resend OTP</p>
+                                        <p style="text-align: center;"></p>
                                         {{-- <input type="button" class="button border fw margin-top-10" onclick="openSmallPopup3()"
 								name="register" value="Next" /> --}}
                                         <input type="button" class="button border fw margin-top-10"
@@ -966,7 +1015,8 @@
                                     {{-- <button style="width: 20px;" onclick="togglePopup1()"
                                   style="text-align:right;"><i class="fa fa-times" aria-hidden="true"
                                       style="color: #000; "></i></button> --}}
-                                      <button class="close11-button" style="text-align: center;" onclick="closePopup()" align="right">
+                                    <button class="close11-button" style="text-align: center;" onclick="closePopup()"
+                                        align="right">
                                         <i class="fa fa-times" aria-hidden="true" style="color: #ff0202;"></i>
                                     </button>
                                     <div class="verification-code">
@@ -1054,10 +1104,13 @@
                 <div class="col-lg-8 col-md-8">
                     <div id="titlebar" class="utf_listing_titlebar">
                         <div class="utf_listing_titlebar_title">
-                            <h2>{{ $listing_page->name }}</h2>
+                            {{-- <a href="{{ $listing_page->google_map_link }}" target="_blank">Navigate</a> --}}
+                            <h2>{{ $listing_page->name }} <span class="listing-tag" style="background-color:#fff; border-color:#fff;">
+								<a href="{{$listing_page->google_map_link}}"><img src="{{ asset('public/images/navigation.png') }}" style="width:25px; height:25px;"></a></span>
+							</h2> 
                             <span> <a href="#utf_listing_location" class="listing-address"> <i
                                         class="sl sl-icon-location"></i>{{ $listing_page->address }} </a> </span>
-                            <!-- <span class="call_now"><i class="sl sl-icon-phone"></i> (415) 796-3633</span> -->
+                          <!-- <span class="call_now"><i class="sl sl-icon-phone"></i> (415) 796-3633</span> -->
                             <div class="utf_star_rating_section"
                                 data-rating="{{ $listing_page->ListingReview->average_rating }}">
                                 <div class="utf_counter_star_rating">
@@ -1071,61 +1124,79 @@
                         </ul> --}}
                             <div id="utf_listing_tags"
                                 class="utf_listing_section listing_tags_section margin-bottom-10 margin-top-0">
-                                <a href="tel:{{ $listing_page->contact_no }}"><i class="sl sl-icon-phone"
+                                <a href="tel:{{ $listing_page->contact_no }}" target="_blank"><i class="sl sl-icon-phone"
                                         aria-hidden="true"></i>
                                     {{ $listing_page->contact_no }}</a>
-                                <a href="mailto:{{ $listing_page->email }}"><i class="fa fa-envelope-o"
+                                <a href="mailto:{{ $listing_page->email }}" target="_blank"><i class="fa fa-envelope-o"
                                         aria-hidden="true"></i>
                                     {{ $listing_page->email }}</a>
-                                <a href="{{ $listing_page->website_link }}"><i class="sl sl-icon-globe"
+                                <a href="{{ $listing_page->website_link }}" target="_blank"><i class="sl sl-icon-globe"
                                         aria-hidden="true"></i>
                                     {{ $listing_page->website_link }}</a>
                             </div>
 
                         </div>
                     </div>
+
                     <div id="utf_listing_overview" class="utf_listing_section">
                         <h3 class="utf_listing_headline_part margin-top-30 margin-bottom-30">Hall Description</h3>
                         <p> {{ $listing_page->description }}
                         </p>
                         <div class="social-contact">
+
                             @if ($listing_page->facebook_link)
-                                <a href="{{ URL::to($listing_page->facebook_link) }}" class="facebook-link" target="_blank">
+                                <a href="{{ $listing_page->facebook_link }}" class="facebook-link" target="_blank">
                                     <i class="fa fa-facebook"></i>
                                 </a>
                             @endif
-                        
+
+                            {{-- @if ($listing_page->facebook_link)
+                        @php
+                            $url = $listing_page->facebook_link;
+                            $urlPart = preg_replace('#^(https?://[^/]+/)?(facebook.com/.+)$#i', '$2', $url);
+                            $secureUrl = 'https://' . $urlPart;
+                        @endphp
+                    
+                        <a href="{{ $secureUrl }}" class="facebook-link" target="_blank">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                    @endif
+                         --}}
                             @if ($listing_page->instagram_link)
-                                <a href="{{ $listing_page->instagram_link }}" class="instagram-link" target="_blank">
+                                <a href="{{ $listing_page->instagram_link }}" class="instagram-link"
+                                    target="_blank">
                                     <i class="fa fa-instagram"></i>
                                 </a>
                             @endif
-                        
+
                             @if ($listing_page->linkedin_link)
                                 <a href="{{ $listing_page->linkedin_link }}" class="linkedin-link" target="_blank">
                                     <i class="fa fa-linkedin"></i>
                                 </a>
                             @endif
-                        
+
                             @if ($listing_page->youtube_link)
                                 <a href="{{ $listing_page->youtube_link }}" class="youtube-link" target="_blank">
                                     <i class="fa fa-youtube-play"></i>
                                 </a>
                             @endif
-                        
+
                             @if ($listing_page->twitter_link)
-                                <a href="{{ $listing_page->twitter_link }}" class="twitter-link">
-                                    <img src="{{ asset('public/images/twiter.png') }}" style="height:15px;width:15px">
+                                <a href="{{ $listing_page->twitter_link }}" class="twitter-link" target="_blank">
+                                    <img src="{{ asset('public/images/twiter.png') }}"
+                                        style="height:15px;width:15px">
                                 </a>
                             @endif
-                        
+
                             @if ($listing_page->threads_link)
-                                <a href="{{ $listing_page->threads_link }}" style="background-color:#000 !important;">
-                                    <img src="{{ asset('public/images/thread.png') }}" style="height:15px;width:15px;">
+                                <a href="{{ $listing_page->threads_link }}"
+                                    style="background-color:#000 !important;" target="_blank">
+                                    <img src="{{ asset('public/images/thread.png') }}"
+                                        style="height:15px;width:15px;">
                                 </a>
                             @endif
                         </div>
-                        
+
                     </div>
                     {{-- @if ($listing_page->show_price == 'yes')
                 <div id="utf_listing_overview" class="utf_listing_section">
@@ -1135,50 +1206,30 @@
                 </div>
                 @endif --}}
 
+                @if (isset($listing_page->vendor_name) && !empty(json_decode($listing_page->vendor_name)))
+                <div class="utf_listing_section">
+                    <div class="show-more">
+                        <div class="utf_pricing_list_section">
+                            <h4>Our Vendors</h4>
+                            <ul>
+                                @if (isset($listing_page->vendor_name))
 
-                    <div class="utf_listing_section">
-                        <div class="show-more">
-                            <div class="utf_pricing_list_section">
-                                <h4>Our Vendors</h4>
-                                <ul>
-                                    @if (isset($listing_page->vendor_name))
 
+                                    {{-- @json($listing_page) --}}
+                                    @php
+                                        $vendor_names = json_decode($listing_page->vendor_name);
+                                        $vendor_descriptions = json_decode($listing_page->vendor_description);
+                                        $vendor_prices = json_decode($listing_page->vendor_price);
+                                        $vendor_images = json_decode($listing_page->vendor_image);
+                                        $vendor_offers = json_decode($listing_page->vendor_offer);
+                                        $vendor_discounts = json_decode($listing_page->vendor_discount);
 
-                                        {{-- @json($listing_page) --}}
-                                        @php
-                                            $vendor_names = json_decode($listing_page->vendor_name);
-                                            $vendor_descriptions = json_decode($listing_page->vendor_description);
-                                            $vendor_prices = json_decode($listing_page->vendor_price);
-                                            $vendor_images = json_decode($listing_page->vendor_image);
-                                            $vendor_offers = json_decode($listing_page->vendor_offer);
-                                            $vendor_discounts = json_decode($listing_page->vendor_discount);
-
-                                            // Rearrange the arrays to bring "Zhep cab" to the front, if it exists
-                                            $vendor_data = [];
-                                            $zhep_cab_data = null;
-                                            foreach ($vendor_names as $index => $vendor_name) {
-                                                if (strcasecmp($vendor_name, 'Zhep cab') === 0) {
-                                                    $zhep_cab_data = [
-                                                        'name' => $vendor_name,
-                                                        'description' => $vendor_descriptions[$index],
-                                                        'price' => $vendor_prices[$index],
-                                                        'image' => $vendor_images[$index],
-                                                        'offer' => $vendor_offers[$index],
-                                                        'discount' => $vendor_discounts[$index],
-                                                    ];
-                                                    unset($vendor_names[$index]);
-                                                    unset($vendor_descriptions[$index]);
-                                                    unset($vendor_prices[$index]);
-                                                    unset($vendor_images[$index]);
-                                                    unset($vendor_offers[$index]);
-                                                    unset($vendor_discounts[$index]);
-                                                    break; // Stop after finding the first occurrence of "Zhep cab"
-                                                }
-                                            }
-
-                                            // Push remaining vendors to the array
-                                            foreach ($vendor_names as $index => $vendor_name) {
-                                                $vendor_data[] = [
+                                        // Rearrange the arrays to bring "Zhep cab" to the front, if it exists
+                                        $vendor_data = [];
+                                        $zhep_cab_data = null;
+                                        foreach ($vendor_names as $index => $vendor_name) {
+                                            if (strcasecmp($vendor_name, 'Zhep cab') === 0) {
+                                                $zhep_cab_data = [
                                                     'name' => $vendor_name,
                                                     'description' => $vendor_descriptions[$index],
                                                     'price' => $vendor_prices[$index],
@@ -1186,143 +1237,127 @@
                                                     'offer' => $vendor_offers[$index],
                                                     'discount' => $vendor_discounts[$index],
                                                 ];
+                                                unset($vendor_names[$index]);
+                                                unset($vendor_descriptions[$index]);
+                                                unset($vendor_prices[$index]);
+                                                unset($vendor_images[$index]);
+                                                unset($vendor_offers[$index]);
+                                                unset($vendor_discounts[$index]);
+                                                break; // Stop after finding the first occurrence of "Zhep cab"
                                             }
+                                        }
 
-                                            // If "Zhep cab" data was found, prepend it to the vendor data array
-                                            if ($zhep_cab_data !== null) {
-                                                array_unshift($vendor_data, $zhep_cab_data);
-                                            }
-                                        @endphp
+                                        // Push remaining vendors to the array
+                                        foreach ($vendor_names as $index => $vendor_name) {
+                                            $vendor_data[] = [
+                                                'name' => $vendor_name,
+                                                'description' => $vendor_descriptions[$index],
+                                                'price' => $vendor_prices[$index],
+                                                'image' => $vendor_images[$index],
+                                                'offer' => $vendor_offers[$index],
+                                                'discount' => $vendor_discounts[$index],
+                                            ];
+                                        }
 
-                                        @if (!empty($vendor_data))
-                                            @foreach ($vendor_data as $vendor)
-                                                <li>
-                                                    <h5>{{ $vendor['name'] }}
-                                                        @if ($vendor['offer'] == 'percent')
-                                                            <sub class="ppl-offer label-light-success">{{ $vendor['discount'] }}%
-                                                                off
-                                                            </sub>
-                                                        @elseif($vendor['offer'] == 'null')
-                                                            <sub class="ppl-offer"> </sub>
-                                                        @else
-                                                            <sub class="ppl-offer label-light-success">{{ $vendor['discount'] }}₹
-                                                                off
-                                                            </sub>
-                                                        @endif
-                                                    </h5>
-                                                    @php
-                                                        $discountedPrice = $vendor['price']; // Default discounted price is the original price
+                                        // If "Zhep cab" data was found, prepend it to the vendor data array
+                                        if ($zhep_cab_data !== null) {
+                                            array_unshift($vendor_data, $zhep_cab_data);
+                                        }
+                                    @endphp
 
-                                                        if (isset($vendor['offer']) && $vendor['offer'] > 0) {
-                                                            if ($vendor['offer'] === 'percent') {
-                                                                // Calculate the discounted price for percentage offer
-                                                                $discountedPrice =
-                                                                    $vendor['price'] -
-                                                                    ($vendor['price'] * $vendor['discount']) / 100;
-                                                            } elseif ($vendor['offer'] === 'rupees') {
-                                                                // Calculate the discounted price for fixed rupees offer
-                                                                $discountedPrice =
-                                                                    $vendor['price'] - $vendor['discount'];
-                                                            }
-                                                        }
-                                                        // echo $discountedPrice;
-                                                    @endphp
-                                                    <p>{{ $vendor['description'] }}</p>
-
-                                                    @if ($discountedPrice < $vendor['price'])
-                                                        {{-- Display original price with discount --}}
-                                                        <span style="background-color:white !important;color:#575555;">
-                                                            <label
-                                                                style="text-decoration: line-through;display:inline; margin-right:5px;">
-                                                                ₹{{ $vendor['price'] }} </label>
-                                                            ₹{{ $discountedPrice }}</span>
+                                    @if (!empty($vendor_data))
+                                        @foreach ($vendor_data as $vendor)
+                                            <li>
+                                                <h5>{{ $vendor['name'] }}
+                                                    @if ($vendor['offer'] == 'percent')
+                                                        <sub class="ppl-offer label-light-success">{{ $vendor['discount'] }}%
+                                                            off
+                                                        </sub>
+                                                    @elseif($vendor['offer'] == 'null')
+                                                        <sub class="ppl-offer"> </sub>
                                                     @else
-                                                        {{-- Display original price without discount --}}
-                                                        <span
-                                                            style="background-color:white !important;color:#575555">₹{{ $vendor['price'] }}</span>
+                                                        <sub class="ppl-offer label-light-success">{{ $vendor['discount'] }}₹
+                                                            off
+                                                        </sub>
                                                     @endif
+                                                </h5>
+                                                @php
+                                                    $discountedPrice = $vendor['price']; // Default discounted price is the original price
 
-                                                    {{-- <img src="{{ asset('public/panel/images/vendor_image/' . $vendor['image']) }}" alt="Vendor Image"> --}}
-                                                </li>
-                                            @endforeach
-                                        @endif
+                                                    if (isset($vendor['offer']) && $vendor['offer'] > 0) {
+                                                        if ($vendor['offer'] === 'percent') {
+                                                            // Calculate the discounted price for percentage offer
+                                                            $discountedPrice =
+                                                                $vendor['price'] -
+                                                                ($vendor['price'] * $vendor['discount']) / 100;
+                                                        } elseif ($vendor['offer'] === 'rupees') {
+                                                            // Calculate the discounted price for fixed rupees offer
+                                                            $discountedPrice =
+                                                                $vendor['price'] - $vendor['discount'];
+                                                        }
+                                                    }
+                                                    // echo $discountedPrice;
+                                                @endphp
+                                                <p>{{ $vendor['description'] }}</p>
+
+                                                @if ($discountedPrice < $vendor['price'])
+                                                    {{-- Display original price with discount --}}
+                                                    <span style="background-color:white !important;color:#575555;">
+                                                        <label
+                                                            style="text-decoration: line-through;display:inline; margin-right:5px;">
+                                                            ₹{{ $vendor['price'] }} </label>
+                                                        ₹{{ $discountedPrice }}</span>
+                                                @else
+                                                    {{-- Display original price without discount --}}
+                                                    <span
+                                                        style="background-color:white !important;color:#575555">₹{{ $vendor['price'] }}</span>
+                                                @endif
+
+                                                {{-- <img src="{{ asset('public/panel/images/vendor_image/' . $vendor['image']) }}" alt="Vendor Image"> --}}
+                                            </li>
+                                        @endforeach
                                     @endif
-                                </ul>
-                                <a href="#" class="show-more-button" data-more-title="Show More"
-                                    data-less-title="Show Less"><i class="fa fa-angle-double-down"></i></a>
-                            </div>
-
+                                @endif
+                            </ul>
+                            @if(count($vendor_data) > 3)
+                            <a href="#" class="show-more-button" data-more-title="Show More"
+                               data-less-title="Show Less"><i class="fa fa-angle-double-down"></i></a>
+                        @endif
+                        
                         </div>
 
-                        @php
-                            $vendor_image = json_decode($listing_page->vendor_image);
-                        @endphp
-
-                        @if (is_array($vendor_image))
-                            @foreach ($vendor_image as $index => $image)
-                                <div id="slider">
-                                    <div class="slides">
-                                        <img src="{{ asset('public/panel/images/vendor_image/' . $image) }}"
-                                            style="width:650px; height:400px;" />
-                                    </div>
-
-                                </div>
-                            @endforeach
-                            <div id="dot"><span class="dot"></span><span class="dot"></span><span
-                                    class="dot"></span><span class="dot"></span><span class="dot"></span>
-                            </div>
-                        @endif
-                        {{-- <div class="slides">  
-                <img src="https://placehold.co/600x300" width="100%" />
-              </div>
-                
-                <div class="slides">  
-                <img src="https://placehold.co/600x300" width="100%">     </div> 
-                
-                 <div class="slides">  
-                <img src="https://placehold.co/600x300" width="100%" />
-              </div> 
-                
-              <div class="slides">  
-                <img src="https://placehold.co/600x300" width="100%" />
-              </div>   --}}
-                        {{-- @endforeach
-                <div id="dot"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-               </div>
-        
-        
-                 <div id="utf_listing_amenities" class="utf_listing_section">
-        <h3 class="utf_listing_headline_part margin-top-50 margin-bottom-40">Amenities</h3>
-    
-        @php
-        $amenitiess = $listing_page->amenities; 
-        $amenities = App\Models\admin\Aminities::whereIn('id', $amenitiess)->pluck('aminities')->toArray();
-
-    @endphp
-      
-        <ul class="utf_listing_features checkboxes margin-top-0">
-          @foreach ($amenities as $amenities)
-          <li>{{$amenities}}</li>
-          @endforeach
-          {{-- <li>Swimming Pool</li>
-          <li>Room Service</li>
-          <li>Luxury Bedding</li>
-          <li>Free Wifi</li>
-          <li>Bath Towel</li>
-          <li>Wireless Internet</li>
-          <li>Free Parking on premises</li>
-          <li>Free Parking on Street</li>
-          <li>Live Music</li>
-          <li>Indoor Pool</li> --}}
-                        </ul>
                     </div>
+
+                    @php
+                        $vendor_image = json_decode($listing_page->vendor_image);
+                    @endphp
+
+                    @if (is_array($vendor_image))
+                        @foreach ($vendor_image as $index => $image)
+                            <div id="slider">
+                                <div class="slides">
+                                    <img src="{{ asset('public/panel/images/vendor_image/' . $image) }}"
+                                        style="width:650px; height:400px;" />
+                                </div>
+
+                            </div>
+                        @endforeach
+                        <div id="dot"><span class="dot"></span><span class="dot"></span><span
+                                class="dot"></span><span class="dot"></span><span class="dot"></span>
+                        </div>
+                    @endif
+                
+                    </ul>
+                </div>
+                @endif
+                  
 
                 </div>
 
 
 
                 <!-- Sidebar -->
-                <form action="{{ route('booking') }}" method="post">
+                <form id="booking_form" action="{{ route('booking') }}" method="post">
                     @csrf
                     <input type="hidden" id="listing_id" name="listing_id" value="{{ $listing_page->id }}">
                     <div class="col-lg-4 col-md-4 margin-top-75 sidebar-search">
@@ -1350,7 +1385,7 @@
 
                             <span><b
                                     style="height: 45px; line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #808080; display: block; background-color: #fff; border: 1px solid #dbdbdb; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03); font-weight: 400; opacity: 1; border-radius: 4px; margin-top:10px;">
-                                    ₹ <span id="price-value"></span></b></span>
+                                    ₹ <span id="price-value" name="price"></span></b></span>
                             <ul class="listing_item_social">
                                 <!-- <li style="color:#000; padding-left:3px; padding-right:3px; border-radius: 5px;"><i class="fa fa-square-o" aria-hidden="true" style="color:green"></i>Available</li>  -->
                                 <li style=" color:#000; padding-left:3px; padding-right:3px; border-radius: 5px;"><i
@@ -1369,15 +1404,16 @@
                                     <!-- <i class="fa fa-calendar"></i> -->
                                     {{-- <i class="fa fa-calendar" id="calendar-icon"></i> --}}
                                     <input type="text" id="date-picker-custom" placeholder="Select Date"
-                                        name="date">
+                                        name="date" required>
                                 </div>
                                 <div class="col-lg-12">
-                                    <input name="name" type="text" placeholder="Name" required />
+                                    <input name="name1" type="text" placeholder="Name" required />
 
                                 </div>
 
                                 <div class="col-lg-12">
-                                    <input name="contact_no" type="text" placeholder="Contact No" maxlength="10" required />
+                                    <input name="contact_no1" type="text" placeholder="Contact No" maxlength="10"
+                                        required />
 
                                 </div>
                                 {{-- @json(is_array($listing_page->from_time_slot)) --}}
@@ -1403,12 +1439,21 @@
                                 <div class="col-lg-12">
                                     <div class="intro-search-field utf-chosen-cat-single">
                                         <select class="selectpicker default" data-selected-text-format="count"
-                                            data-size="7" title="Select Time" name="time_slot">
+                                            data-size="7" title="Select Time" name="time_slot" required>
                                             <!-- Options will be appended here by JavaScript -->
                                         </select>
                                     </div>
                                 </div>
 
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
 
 
                                 {{-- <div class="col-lg-12">
@@ -1491,6 +1536,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                         </div>
                     </div>
                 </form>
+
 
 
                 <div class="col-lg-8" margin-top-20>
@@ -1589,7 +1635,8 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                                         @endphp
                                         <div class="row">
                                             <div class="col-lg-2 review_progres_title">
-                                                <small><strong>{{ $rating }}</strong></small></div>
+                                                <small><strong>{{ $rating }}</strong></small>
+                                            </div>
                                             <div class="col-lg-10">
                                                 <div class="progress">
                                                     <div class="progress-bar" role="progressbar"
@@ -1739,7 +1786,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                                         <div>
                                             <label for="review_text"
                                                 class="utf_listing_headline_part margin-bottom-20">Review:</label>
-                                            <textarea cols="40" placeholder="Your Message..." rows="3" id="review_text" name="review" required></textarea>
+                                            <textarea cols="40" placeholder="Your Message..." rows="3" id="review_text" name="review" ></textarea>
                                         </div>
 
                                         <button type="submit" class="button">Save changes</button>
@@ -1750,7 +1797,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                     </div>
 
 
-                    <form id="utf_add_comment" class="utf_add_comment" action="{{ route('review') }}"
+                    <form id="review_form" class="utf_add_comment" action="{{ route('review') }}"
                         method="post">
                         @csrf
                         <input type="hidden" name="listing_id" value="{{ $listing_page->id }}">
@@ -1795,7 +1842,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                                 <div>
                                     <label class="utf_listing_headline_part margin-bottom-20"
                                         id="reviewLabel">Review:</label>
-                                    <textarea id="reviewTextarea" cols="40" placeholder="Your Message..." rows="3" name="review" required
+                                    <textarea id="reviewTextarea" cols="40" placeholder="Your Message..." rows="3" name="review" 
                                         style="display: none;"></textarea>
                                 </div>
                             </fieldset>
@@ -1919,8 +1966,8 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
     <!-- Scripts -->
     <script src="{{ asset('public/scripts/jquery-3.4.1.min.js') }}"></script>
     <script src="
-        https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js
-        "></script>
+                    https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js
+                    "></script>
     <script src="{{ asset('public/scripts/chosen.min.js') }}"></script>
     <script src="{{ asset('public/scripts/slick.min.js') }}"></script>
     <script src="{{ asset('public/scripts/rangeslider.min.js') }}"></script>
@@ -1944,11 +1991,227 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
     <script src="{{ asset('public/scripts/daterangepicker.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     @include('sweetalert')
+    <script>
+        $('#loginForm').on('submit', function(e) {
+            e.preventDefault(); // Prevent form submission
+    
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        window.location.href = response.redirect_url;
+                    } else if (response.status === 'error') {
+                        $('#errorMsg').text(response.message).show();
+                    }
+                },
+                error: function() {
+                    $('#errorMsg').text('An error occurred. Please try again.').show();
+                }
+            });
+        });
+    </script>
+    
+<script>
+    $(document).ready(function() {
+        $('#review_form').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: "{{ route('review') }}",
+                type: "POST",
+                data: formData,
+                success: function(response) {
+                    if(response.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: response.success,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        // Optionally, you can reset the form here
+                        $('#review_form')[0].reset();
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.error,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) { // validation error
+                        var errors = xhr.responseJSON.messages;
+                        var errorMessage = '';
+
+                        $.each(errors, function(key, value) {
+                            errorMessage += value + '\n';
+                        });
+
+                        Swal.fire({
+                            title: 'Validation Error!',
+                            text: errorMessage,
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Oops!',
+                            text: 'An error occurred. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+    $('#booking_form').on('submit', function(e) {
+        e.preventDefault();
+
+        var formData = $(this).serialize();
+
+        $.ajax({
+            url: "{{ route('booking') }}",
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                    // Optionally, reset the form here
+                    $('#booking_form')[0].reset();
+                } else if (response.error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) { // validation error
+                    var errors = xhr.responseJSON.messages;
+                    var errorMessage = '';
+
+                    $.each(errors, function(key, value) {
+                        errorMessage += value + '\n';
+                    });
+
+                    Swal.fire({
+                        title: 'Validation Error!',
+                        text: errorMessage,
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Oops!',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
+        });
+    });
+});
+
+    </script>
 
 
+    <script>
+        function otp_type() {
+            let inputs = Array.from(document.getElementsByClassName("inputOtp"));
+            inputs.forEach((f) =>
+                f.addEventListener("keyup", (e) => {
+                    let val = e.target.value;
+                    const target = e.target;
+                    const key = e.key.toLowerCase();
+
+                    if (key == "backspace" || key == "delete") {
+                        target.value = "";
+                        const prev = target.previousElementSibling;
+                        if (prev) {
+                            prev.focus();
+                        }
+                        return;
+                    }
+                    if (/[0-9]/.test(val)) {
+                        let next = e.target.nextElementSibling;
+                        if (next) next.focus();
+                    } else {
+                        alert("Invalid Input");
+                        e.target.value = "";
+                    }
+                })
+            );
+        }
+        otp_type();
+    </script>
+
+    <script>
+        $(document).ready(function() {
+
+            console.log(1);
+            $('#booking_form').validate({
+                rules: {
+                    name1: {
+                        required: true
+                    },
+                    time: {
+                        required: true,
+                        // email: true
+                    },
+                    contact_no1: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
+                    },
+                    date: {
+                        required: true,
+                        // minlength: 4
+                    }
+                },
+                messages: {
+                    name1: {
+                        required: "<span class='error-msg'>Please enter your name</span>"
+                    },
+                    time: {
+                        required: "<span class='error-msg'>Please select time slot</span>",
+                        // email: "<span class='error-msg'>Please enter a valid email address</span>"
+                    },
+                    contact_no1: {
+                        required: "<span class='error-msg'>Please enter your contact number</span>",
+                        digits: "<span class='error-msg'>Please enter a valid contact number</span>",
+                        minlength: "<span class='error-msg'>Contact number must be 10 digits long</span>",
+                        maxlength: "<span class='error-msg'>Contact number must be 10 digits long</span>"
+                    },
+                    // password: {
+                    //     required: "<span class='error-msg'>Please enter a password</span>",
+                    //     minlength: "<span class='error-msg'>Password must be at least 4 characters long</span>"
+                    // }
+                }
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             // Function to set the stars based on a value
@@ -2062,8 +2325,16 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                     $('#email').val('');
                     $('#contact_no').val('');
                     $('#password1').val('');
-                } else {
-                    $('#name').attr('placeholder', 'Name');
+					
+					$('#gender-section').hide();
+					
+                } else if (selectedValue === 'user') {
+                    $('#name').attr('placeholder', 'Name').val('');
+                    $('#email').val('');
+                    $('#contact_no').val('');
+                    $('#password1').val('');
+					
+					$('#gender-section').show();
                 }
             });
             $("#reg_id").on('click', function() {
@@ -2077,7 +2348,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
             });
         });
     </script>
-   
+
 
 
     <script>
@@ -2303,7 +2574,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
     </script>
 
 
-   
+
     <script>
         // Function to open the main popup
         function openMainPopup() {
@@ -2321,10 +2592,22 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
         function openSmallPopup() {
             $(".pop_up_div").hide();
             $("#mobile_no").show();
+            $("#smallPopup1").show();
+            $("#contact").val('');
             $("#header_change").text('Forget Password');
 
         }
 
+        $(document).on('click', '.mfp-close', function() {
+            console.log('close');
+            // document.getElementById('smallPopup1').style.display = 'none';
+            $('#login_page').show();
+            $('#mobile_no').hide();
+            $('#reset_otp').hide();
+            $('#update_password').hide();
+            $('#tab2').hide();
+        })
+        
         function opensignin() {
             // console.log(1);
             $("#tab2").hide();
@@ -2408,6 +2691,10 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                         sendOtpRequest(contact, token);
                         $(".pop_up_div").hide();
                         $("#reset_otp").show();
+                        $("#otpInput1").val('');
+                        $("#otpInput2").val('');
+                        $("#otpInput3").val('');
+                        $("#otpInput4").val('');
                     } else {
                         // Mobile number does not exist, show an error
                         alert(response.data.error);
@@ -2455,12 +2742,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
         }
 
 
-
-
-        // to varify otp
         function verifyOtpforforgotpass() {
-            $(".pop_up_div").hide();
-            $("#update_password").show();
             // Get the entered OTP
             var enteredOtp = document.getElementById("otpInput1").value +
                 document.getElementById("otpInput2").value +
@@ -2469,13 +2751,11 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
 
             var token = document.querySelector('meta[name="csrf-token"]').content;
 
-
             // Make an AJAX request to verify the OTP
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", "verify_otp_for_forgot_pass", true);
+            xhr.open("POST", "/bookhall/verify_otp_for_forgot_pass", true);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.setRequestHeader("X-CSRF-TOKEN", token); // Include CSRF token
-
 
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -2484,22 +2764,24 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                     // Check if the entered OTP is valid
                     if (response.valid) {
                         alert("OTP verification successful!");
+                        $('#update_password').show();
                         // Move to the next popup
                         openSmallPopup3();
                     } else {
+                        console.log("Invalid OTP entered.");
                         // Display an error message or handle it accordingly
                         alert("Invalid OTP. Please try again.");
+                        $('#smallPopup2').show(); // Ensure the current popup stays open
                     }
                 }
             };
-            // ---------------------------------------------------------
-            // the below line doesnt work in online so i used another approach for this
-            // ----------------------------------------------------------
+
             // Send the entered OTP to the server for verification
             xhr.send(JSON.stringify({
                 enteredOtp: enteredOtp
             }));
         }
+
 
         // Function to open the third small popup
         function openSmallPopup3() {
@@ -2508,9 +2790,9 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
         }
 
         // Function to close the third small popup
-        function closeSmallPopup3() {
-            document.getElementById('smallPopup3').style.display = 'none';
-        }
+        // function closeSmallPopup3() {
+        //     document.getElementById('smallPopup3').style.display = 'none';
+        // }
 
 
         function submitNewPasswordForm() {
@@ -2549,7 +2831,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
             }
         }
     </script>
- {{-- <script>
+    {{-- <script>
     var typed = new Typed('.typed-words', {
         strings: ["Wedding Hall"],
         typeSpeed: 80,
@@ -2597,74 +2879,74 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
             });
         }
     </script>
- <script>
-    var margins = {
-        home: 35,
-        library: 137,
-        history: 238,
-        manage: 346,
-        settings: 457
-    };
+    <script>
+        var margins = {
+            home: 35,
+            library: 137,
+            history: 238,
+            manage: 346,
+            settings: 457
+        };
 
-    var bar = document.querySelector(".bar");
-    var line = document.querySelector(".line");
+        var bar = document.querySelector(".bar");
+        var line = document.querySelector(".line");
 
-    let updateTimeout;
+        let updateTimeout;
 
-    line.style.width = "60px";
-    updateTimeout = setTimeout(function() {
-        line.style.width = "25px";
-        line.style.marginLeft = "35px";
-    }, 250);
+        line.style.width = "60px";
+        updateTimeout = setTimeout(function() {
+            line.style.width = "25px";
+            line.style.marginLeft = "35px";
+        }, 250);
 
-    bar.children[0].focus();
+        bar.children[0].focus();
 
-    Array.from(bar.children).forEach((button) => {
-        button.addEventListener("click", (e) => {
+        Array.from(bar.children).forEach((button) => {
+            button.addEventListener("click", (e) => {
 
-            if (updateTimeout) clearTimeout(updateTimeout);
+                if (updateTimeout) clearTimeout(updateTimeout);
 
-            const lastMargin = parseInt(line.style.marginLeft.replace("px", ""));
+                const lastMargin = parseInt(line.style.marginLeft.replace("px", ""));
 
-            const newMargin = margins[button.id];
+                const newMargin = margins[button.id];
 
-            if (newMargin > lastMargin) {
+                if (newMargin > lastMargin) {
 
-                line.style.width = newMargin - lastMargin + 25 + "px";
+                    line.style.width = newMargin - lastMargin + 25 + "px";
 
-                updateTimeout = setTimeout(function() {
+                    updateTimeout = setTimeout(function() {
 
-                    line.style.width = "25px";
+                        line.style.width = "25px";
+                        line.style.marginLeft = margins[button.id] + "px";
+
+                    }, 250);
+
+                } else {
+
+                    line.style.width = lastMargin - newMargin + 25 + "px";
+
                     line.style.marginLeft = margins[button.id] + "px";
 
-                }, 250);
+                    updateTimeout = setTimeout(function() {
 
-            } else {
+                        line.style.width = "25px";
 
-                line.style.width = lastMargin - newMargin + 25 + "px";
+                    }, 250);
 
-                line.style.marginLeft = margins[button.id] + "px";
+                }
 
-                updateTimeout = setTimeout(function() {
-
-                    line.style.width = "25px";
-
-                }, 250);
-
-            }
-
+            });
         });
-    });
-</script>
+    </script>
 
-<script>
-    function closePopup() {
-        var popup = document.getElementById('popup'); // Assuming the ID of your popup/modal is 'popup'
-        popup.style.display = 'none';
-        var overlay = document.getElementById('overlay'); // Assuming the ID of your overlay is 'overlay'
-        overlay.style.display = 'none';
-    }
-</script>
+    <script>
+        function closePopup() {
+            var popup = document.getElementById('popup'); // Assuming the ID of your popup/modal is 'popup'
+            popup.style.display = 'none';
+            var overlay = document.getElementById('overlay'); // Assuming the ID of your overlay is 'overlay'
+            overlay.style.display = 'none';
+        }
+    </script>
     <script>
         $(function() {
             // event.preventDefault();
@@ -2730,10 +3012,10 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
             $("body").mouseup(function() {
                 if (!mouse_is_inside) close_panel_dropdown();
             });
-            
+
             setTimeout(() => {
-			$('.amenity:first').trigger('click');
-		}, 1500);
+                $('.amenity:first').trigger('click');
+            }, 1500);
 
             $('.amenity').on('change', function() {
                 // console.log(1);
@@ -2787,12 +3069,12 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
             function formatPrice(price) {
                 // Convert price to a string
                 price = price.toString();
-                
+
                 // Split the price into integer and decimal parts (if any)
                 let parts = price.split(".");
                 let integerPart = parts[0];
                 let decimalPart = parts.length > 1 ? "." + parts[1] : "";
-                
+
                 // Format the integer part with commas for the Indian numbering system
                 let lastThreeDigits = integerPart.slice(-3);
                 let otherDigits = integerPart.slice(0, -3);
@@ -2800,7 +3082,7 @@ line-height: 40px; padding: 0 8px; outline: none; font-size: 15px; color: #80808
                     lastThreeDigits = ',' + lastThreeDigits;
                 }
                 let formattedIntegerPart = otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThreeDigits;
-                
+
                 // Combine the formatted integer part with the decimal part
                 return formattedIntegerPart + decimalPart;
             }

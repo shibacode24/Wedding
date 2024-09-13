@@ -32,6 +32,10 @@
         font-family: Arial, sans-serif;
     }
 
+    .error-msg {
+        color: red;
+    }
+
     .popup {
         display: none;
         position: fixed;
@@ -411,7 +415,7 @@
     }
 
 
-    
+
 
     /* Active date hover color */
     .calendar-table .available:hover,
@@ -437,14 +441,38 @@
         background-color: #cec9c9 !important;
     }
 
-    .close11-button{
-     color: #ff2222;
-    background-color: #fff;
-    border-radius: 50px;
-    top: 20px;
-    right: 20px;
-    width: 34px;
-    height: 34px;
+    .close11-button {
+        color: #ff2222;
+        background-color: #fff;
+        border-radius: 50px;
+        top: 20px;
+        right: 20px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .inputs {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 30px;
+    }
+
+    .inputOtp {
+        width: 30px;
+        height: 30px;
+        margin: 0 4px;
+        border: none;
+        border-bottom: 2px solid #483d8b;
+        background: transparent;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .inputOtp:focus {
+        border-bottom: 3px solid orange;
+        outline: none;
     }
 </style>
 
@@ -487,9 +515,7 @@
                                 <li><a href="{{ route('contact') }}">Contact Us</a></li>
                                 <li><a href="https://bookmyweddinghall.com/#hall1">Vendors</a></li>
                                 @if (Auth::check())
-                                  
-                                    <li><a href="#">History</a></li>
-                                  
+                                    <li><a href="{{ route('history') }}">History</a></li>
                                 @endif
                             </ul>
                         </nav>
@@ -503,27 +529,46 @@
                                     Listing</a>
                             @endif
 
-                            @if (Auth::check())
-                            @if (Auth::user()->gender == 'Female')
-                            <a href="{{ route('user_profile') }}"
-                            style=" color:red;"> <img
-                            src="{{ asset('public/images/female.png') }}" style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}</a> 
-                            @else
-                            <a href="{{ route('user_profile') }}"
-                            style=" color:red;"> <img
-                        src="{{ asset('public/images/male.png') }}" style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}</a>
-                            @endif
-                            @endif
-							
-						
+                            {{-- @if (Auth::check())
+                                @if (Auth::user()->gender == 'Female')
+                                    <a href="{{ route('user_profile') }}" style=" color:red;"> <img
+                                            src="{{ asset('public/images/female.png') }}"
+                                            style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}</a>
+                                @else
+                                    <a href="{{ route('user_profile') }}" style=" color:red;"> <img
+                                            src="{{ asset('public/images/male.png') }}"
+                                            style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}</a>
+                                @endif
+                            @endif --}}
 
                             @if (Auth::check())
-                                <a href="{{ route('logout') }}"><i class="fa fa-power-off" aria-hidden="true" style="color:red; padding-left:20px;"></i>
+                                @if (Auth::user()->photo)
+                                    <a href="{{ route('user_profile') }}" style="color:red;">
+                                        <img src="{{ asset('public/images/photos/' . Auth::user()->photo) }}"
+                                            style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}
+                                    </a>
+                                @elseif (Auth::user()->gender == 'Female')
+                                    <a href="{{ route('user_profile') }}" style="color:red;">
+                                        <img src="{{ asset('public/images/female.png') }}"
+                                            style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}
+                                    </a>
+                                @else
+                                    <a href="{{ route('user_profile') }}" style="color:red;">
+                                        <img src="{{ asset('public/images/male.png') }}"
+                                            style="width:30px; height:30px;"> &nbsp;{{ Auth::user()->name }}
+                                    </a>
+                                @endif
+                            @endif
+
+
+                            @if (Auth::check())
+                                <a href="{{ route('logout') }}"><i class="fa fa-power-off" aria-hidden="true"
+                                        style="color:red; padding-left:20px;"></i>
                                 </a>
                             @else
                                 <span id="sign_in">
-                                    <a href="#dialog_signin_part" onclick="opensignin();"
-                                        class="button border sign-in popup-with-zoom-anim"><i class="fa fa-sign-in"></i>
+                                    <a href="#dialog_signin_part" class="button border sign-in popup-with-zoom-anim"><i
+                                            class="fa fa-sign-in"></i>
                                         Sign In</a>
                                 </span>
                             @endif
@@ -549,8 +594,9 @@
                             <div class="tab_container alt">
                                 <span class="pop_up_div" id="login_page">
                                     <div class="tab_content" id="tab1" style="display:none;">
-                                        <form method="post" class="login" action="{{ route('login') }}">
+                                        <form method="post" id="loginForm" class="login" action="{{ route('login') }}">
                                             @csrf
+                                              <div id="errorMsg" style="display: none; color: red;"></div>
                                             <p class="utf_row_form utf_form_wide_block">
                                                 <label for="username">
                                                     <input type="text" class="input-text" name="email"
@@ -566,8 +612,8 @@
                                             </p>
                                             <div class="utf_row_form utf_form_wide_block form_forgot_part"
                                                 style="margin-bottom:5px;"> <span class="lost_password fl_left">
-                                                    <a href="javascript:void(0);" onclick="openSmallPopup()"
-                                                        style="font-size:12px;">Forgot
+                                                    <a href="javascript:void(0);" id="forget"
+                                                        onclick="openSmallPopup()" style="font-size:12px;">Forgot
                                                         Password?</a> </span>
                                                 <div class="checkboxes fl_right">
                                                     <input id="remember-me" type="checkbox" name="check">
@@ -587,6 +633,7 @@
                                             </div>
 
                                         </form>
+                                      
                                     </div>
                                 </span>
                                 <span id="tab2" class="pop_up_div" style="display:none;">
@@ -623,8 +670,8 @@
                                                 </label>
                                             </p>
 
-                                            <p class="utf_row_form utf_form_wide_block">
-                                                <label for="email">
+                                            <p id="gender-section" class="utf_row_form utf_form_wide_block">
+                                                <label for="gender">
                                                     <select title="Select Gender" name="gender"
                                                         style="padding-left: 15px;padding-bottom:9px;">
                                                         <option>Male</option>
@@ -632,11 +679,12 @@
                                                     </select>
                                                 </label>
                                             </p>
-                                            
+
                                             <p class="utf_row_form utf_form_wide_block">
                                                 <label for="contact-no">
                                                     <input class="input-text" type="text" name="contact_no"
-                                                        id="contact_no" placeholder="Contact No" maxlength="10" required />
+                                                        id="contact_no" placeholder="Contact No" maxlength="10"
+                                                        required />
                                                 </label>
                                             </p>
                                             <p class="utf_row_form utf_form_wide_block">
@@ -672,7 +720,7 @@
                                                 <label for="contact">
                                                     <input type="text" class="input-text" name="contact"
                                                         id="contact" value=""
-                                                        placeholder="Enter Phone Number" />
+                                                        placeholder="Enter Phone Number" maxlength="10" />
                                                 </label>
                                             </p>
 
@@ -687,18 +735,37 @@
                                     </div>
                                 </span>
 
+                                {{-- forgot password --}}
+
                                 <span id="reset_otp" class="pop_up_div" style="display:none;">
                                     <div class="small-popup" id="smallPopup2">
                                         <span class="close-mark" onclick="closeSmallPopup2()"><img
                                                 src="{{ asset('public/images/cross.png') }}" style="height:25px;"
                                                 alt=""></span>
                                         <div class="otp-container" style="margin-top:15%;">
-                                            <input id="otpInput1" class="otp-input" type="text" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
+                                            {{-- <input id="otpInput1" class="otp-input" type="text" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
                                             <input id="otpInput2" class="otp-input" type="text" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
                                             <input id="otpInput3" class="otp-input" type="text" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
-                                            <input id="otpInput4" class="otp-input" type="text" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
+                                            <input id="otpInput4" class="otp-input" type="text" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" /> --}}
+                                            <section id="otp_type">
+                                                <div class="inputs">
+                                                    <input type="text" inputmode="numeric" id="otpInput1"
+                                                        maxlength="1" class="inputOtp"
+                                                        style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important;" />
+                                                    <input type="text" inputmode="numeric" id="otpInput2"
+                                                        maxlength="1" class="inputOtp"
+                                                        style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                                    <input type="text" inputmode="numeric" id="otpInput3"
+                                                        maxlength="1" class="inputOtp"
+                                                        style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                                    <input type="text" inputmode="numeric" id="otpInput4"
+                                                        maxlength="1" class="inputOtp"
+                                                        style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                                </div>
+                                            </section>
+
                                         </div>
-                                        <p style="text-align: center;">Resend OTP</p>
+                                        <p style="text-align: center;"></p>
                                         {{-- <input type="button" class="button border fw margin-top-10" onclick="openSmallPopup3()"
 								name="register" value="Next" /> --}}
                                         <input type="button" class="button border fw margin-top-10"
@@ -749,20 +816,35 @@
                                     {{-- <button class="close11-button" style="width: 20px; text-align: right;" onclick="closePopup()">
                                         <i class="fa fa-times" aria-hidden="true" style="color: #000;"></i>
                                     </button> --}}
-                                    <button class="close11-button" style="text-align: center;" onclick="closePopup()" align="right">
+                                    <button class="close11-button" style="text-align: center;" onclick="closePopup()"
+                                        align="right">
                                         <i class="fa fa-times" aria-hidden="true" style="color: #ff0202;"></i>
                                     </button>
                                     <div class="verification-code">
                                         <label class="control-label" style="color:red; font-size: 24px;">Verification
                                             Code</label>
                                         <div class="verification-code--inputs">
-                                            <input type="text" id="otp1" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
+                                            <div class="inputs">
+                                                <input type="text" inputmode="numeric" id="otp1"
+                                                    maxlength="1" class="inputOtp" value=""
+                                                    style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important;" />
+                                                <input type="text" inputmode="numeric" id="otp2"
+                                                    maxlength="1" class="inputOtp" value=""
+                                                    style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                                <input type="text" inputmode="numeric" id="otp3"
+                                                    maxlength="1" class="inputOtp" value=""
+                                                    style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                                <input type="text" inputmode="numeric" id="otp4"
+                                                    maxlength="1" class="inputOtp" value=""
+                                                    style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;border-bottom:2px solid #000;margin:0px !important" />
+                                            </div>
+                                            {{-- <input type="text" id="otp1" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
                                             <input type="text" id="otp2" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
                                             <input type="text" id="otp3" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
-                                            <input type="text" id="otp4" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" />
+                                            <input type="text" id="otp4" maxlength="1" style="border-left:1px solid #fff; border-right: 1px solid #fff; border-top: 1px solid #fff;" /> --}}
 
                                         </div>
-                                        <button type="submit" class="button border fw margin-top-10" name="register"
+                                        <button type="submit" class="button border fw margin-top-30" name="register"
                                             onclick="verifyOTP()" value="Register">Verify </button>
                                         <input type="hidden" id="verificationCode" />
                                     </div>
@@ -817,7 +899,7 @@
 
 
         <!-- Footer -->
-        <div id="footer" class="footer_sticky_part" id="contact">
+        <div id="footer" class="footer_sticky_part">
             <div class="container">
                 <div class="row">
                     <div class="col-md-3">
@@ -828,10 +910,21 @@
                         </div>
                         <p>
                         <ul class="utf_social_icon rounded ">
-                            <li><a class="facebook" href="#"><i class="icon-facebook"></i></a></li>
-                            <li><a class="twitter" href="#"><i class="icon-twitter"></i></a></li>
-                            <li><a class="linkedin" href="#"><i class="icon-linkedin"></i></a></li>
-                            <li><a class="youtube" href="#"><i class="icon-youtube"></i></a></li>
+
+                            <li><a class="linkedin"
+                                    href="https://www.linkedin.com/in/bookmy-weddinghall-7bab57307?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                                    target="_blank" style="margin-right: 0px"><i class="icon-linkedin"></i></a></li>
+                            <li><a class="instagram"
+                                    href="https://www.instagram.com/bookmyweddinghall?utm_source=qr&igsh=eGdkejVuYmlxaHF4"
+                                    target="_blank" style="margin-right: 0px"><i class="icon-youtube"></i></a></li>
+                            <li><a class="youtube" href="https://youtube.com/@bookmyweddinghall?si=TvzTGa0oBUmOC1Za"
+                                    target="_blank" style="margin-right: 3px"><i class="icon-youtube"></i></a></li>
+                            <li><a href="https://www.threads.net/@bookmyweddinghall" target="_blank"><img
+                                        src="{{ asset('public/images/thread.png') }}"
+                                        style="height:22px;width:22px;margin-top:10px;margin-right:0px;"></a></li>
+                            <li><a href="https://x.com/BookMyWedHall?t=z4Aa4hOLlcTyYKEa7xUBKw&s=08"
+                                    target="_blank"><img src="{{ asset('public/images/twiter.png') }}"
+                                        style="height:20px;width:20px; margin-top:10px; margin-right:0px;"></a></li>
 
                         </ul>
                         </p>
@@ -840,7 +933,7 @@
                         <h4>Business Services</h4>
                         <ul class="social_footer_link">
                             <li><a href="#">Book Wedding Hall</a></li>
-                            <li><a href="{{route('business_listing_login')}}">Free Wedding Hall Listing</a></li>
+                            <li><a href="{{ route('business_listing_login') }}">Free Wedding Hall Listing</a></li>
                             <li><a href="#">Vendor Registration</a></li>
 
                         </ul>
@@ -849,8 +942,8 @@
                     <div class="col-md-2">
                         <h4>Know More</h4>
                         <ul class="social_footer_link">
-                            <li><a href="{{route('how-it-work')}}">How It Works</a></li>
-                            <li><a href="{{route('about')}}">About Us</a></li>
+                            <li><a href="{{ route('how-it-work') }}">How It Works</a></li>
+                            <li><a href="{{ route('about') }}">About Us</a></li>
 
                         </ul>
                     </div>
@@ -874,7 +967,8 @@
                                     style="color:#fff;"></i>&nbsp;&nbsp;&nbsp;<a href="tel:+919766658802">
                                     +919766658802</a></li>
                             <li><i class="fa fa-phone" aria-hidden="true" style="color:#fff;"></i>&nbsp;&nbsp;&nbsp;
-                                <a href="tel:+919730158802">+919730158802</a></li>
+                                <a href="tel:+919730158802">+919730158802</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -883,7 +977,7 @@
                     <div class="col-md-6">
                         <div class="footer_copyright_part"
                             style="text-align:left; padding-top:5px;  padding-bottom:5px; margin-top:0px;"> <img
-                                src="{{ asset('public/images/zhep-logo.png') }}" style="width:15%; height:15%;">
+                                src="{{ asset('public/images/zhep-logo.png') }}" style="width:8%; height:8%;">
                             <span style="font-size:13px;"> &nbsp;© 2024 BookMyWeddingHall.</span>
                             <!-- <div class="row">
                              <div class="col-md-3" align="right">
@@ -914,8 +1008,8 @@
     <!-- Scripts -->
     <script src="{{ asset('public/scripts/jquery-3.4.1.min.js') }}"></script>
     <script src="
-    https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js
-    "></script>
+            https://cdn.jsdelivr.net/npm/jquery-validation@1.20.0/dist/jquery.validate.min.js
+            "></script>
     <script src="{{ asset('public/scripts/chosen.min.js') }}"></script>
     <script src="{{ asset('public/scripts/slick.min.js') }}"></script>
     <script src="{{ asset('public/scripts/rangeslider.min.js') }}"></script>
@@ -930,25 +1024,98 @@
     <script src="{{ asset('public/scripts/daterangepicker.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    
+
     @include('sweetalert')
+    <script>
+        $('#loginForm').on('submit', function(e) {
+            e.preventDefault(); // Prevent form submission
     
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        window.location.href = response.redirect_url;
+                    } else if (response.status === 'error') {
+                        $('#errorMsg').text(response.message).show();
+                    }
+                },
+                error: function() {
+                    $('#errorMsg').text('An error occurred. Please try again.').show();
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function openSmallPopup() {
+            console.log(1);
+            $(".pop_up_div").hide();
+            $("#mobile_no").show();
+            $("#smallPopup1").show();
+            $("#contact").val('');
+            $("#header_change").text('Forget Password');
+            // const element = document.getElementById('mobile_no');
+            // if (element) {
+            //     console.log('Element is in the DOM');
+            //     console.log('Is element visible?', window.getComputedStyle(element).display !== 'none');
+            // } else {
+            //     console.log('Element is not in the DOM');
+            // }
+        }
+
+        function otp_type() {
+            let inputs = Array.from(document.getElementsByClassName("inputOtp"));
+            inputs.forEach((f) =>
+                f.addEventListener("keyup", (e) => {
+                    let val = e.target.value;
+                    const target = e.target;
+                    const key = e.key.toLowerCase();
+
+                    if (key == "backspace" || key == "delete") {
+                        target.value = "";
+                        const prev = target.previousElementSibling;
+                        if (prev) {
+                            prev.focus();
+                        }
+                        return;
+                    }
+                    if (/[0-9]/.test(val)) {
+                        let next = e.target.nextElementSibling;
+                        if (next) next.focus();
+                    } else {
+                        alert("Invalid Input");
+                        e.target.value = "";
+                    }
+                })
+            );
+        }
+        otp_type();
+    </script>
+
     <script>
         $(document).ready(function() {
             // Function to change placeholder based on selection
             $('.check-a1').on('change', function() {
                 var selectedValue = $(this).val();
-                
+
                 if (selectedValue === 'business') {
                     $('#name').attr('placeholder', 'Business Name').val('');
                     $('#email').val('');
                     $('#contact_no').val('');
                     $('#password1').val('');
+
+                    $('#gender-section').hide();
+
                 } else if (selectedValue === 'user') {
                     $('#name').attr('placeholder', 'Name').val('');
-                    // $('#email').val('');
-                    // $('#contact_no').val('');
-                    // $('#password1').val('');
+                    $('#email').val('');
+                    $('#contact_no').val('');
+                    $('#password1').val('');
+
+                    $('#gender-section').show();
+
                 }
             });
             $("#reg_id").on('click', function() {
@@ -984,91 +1151,91 @@
     </script>
 
     <script>
-       $(document).ready(function() {
-    // Form validation
-    $('#reg_form').validate({
-        rules: {
-            name: {
-                required: true
-            },
-            email: {
-                required: true,
-                email: true
-            },
-            contact_no: {
-                required: true,
-                digits: true,
-                minlength: 10,
-                maxlength: 10
-            },
-            password: {
-                required: true,
-                minlength: 4
-            }
-        },
-        messages: {
-            name: {
-                required: "<span class='error-msg'>Please enter your name</span>"
-            },
-            email: {
-                required: "<span class='error-msg'>Please enter your email</span>",
-                email: "<span class='error-msg'>Please enter a valid email address</span>"
-            },
-            contact_no: {
-                required: "<span class='error-msg'>Please enter your contact number</span>",
-                digits: "<span class='error-msg'>Please enter a valid contact number</span>",
-                minlength: "<span class='error-msg'>Contact number must be 10 digits long</span>",
-                maxlength: "<span class='error-msg'>Contact number must be 10 digits long</span>"
-            },
-            password: {
-                required: "<span class='error-msg'>Please enter a password</span>",
-                minlength: "<span class='error-msg'>Password must be at least 4 characters long</span>"
+        $(document).ready(function() {
+            // Form validation
+            $('#reg_form').validate({
+                rules: {
+                    name: {
+                        required: true
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    contact_no: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
+                    },
+                    password: {
+                        required: true,
+                        minlength: 4
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "<span class='error-msg'>Please enter your name</span>"
+                    },
+                    email: {
+                        required: "<span class='error-msg'>Please enter your email</span>",
+                        email: "<span class='error-msg'>Please enter a valid email address</span>"
+                    },
+                    contact_no: {
+                        required: "<span class='error-msg'>Please enter your contact number</span>",
+                        digits: "<span class='error-msg'>Please enter a valid contact number</span>",
+                        minlength: "<span class='error-msg'>Contact number must be 10 digits long</span>",
+                        maxlength: "<span class='error-msg'>Contact number must be 10 digits long</span>"
+                    },
+                    password: {
+                        required: "<span class='error-msg'>Please enter a password</span>",
+                        minlength: "<span class='error-msg'>Password must be at least 4 characters long</span>"
+                    }
+                }
+            });
+        });
+
+        function validateAndSendOTP() {
+            console.log(1);
+            if ($('#reg_form').valid()) {
+                var email = $('#email').val();
+                var contact_no = $('#contact_no').val();
+
+                $.ajax({
+                    url: '{{ route('check.unique') }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        email: email,
+                        contact_no: contact_no
+                    },
+                    success: function(response) {
+                        if (response.exists) {
+                            if (response.email_exists) {
+                                alert('Email already exists');
+
+                            }
+                            if (response.contact_no_exists) {
+                                alert('Contact number already exists');
+                            }
+                        } else {
+                            togglePopup();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr);
+                        alert('An error occurred while checking the data.');
+                    }
+                });
+            } else {
+                console.log('Form validation failed');
             }
         }
-    });
-});
-
-function validateAndSendOTP() {
-    console.log(1);
-    if ($('#reg_form').valid()) {
-        var email = $('#email').val();
-        var contact_no = $('#contact_no').val();
-
-        $.ajax({
-            url: '{{ route('check.unique') }}',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                email: email,
-                contact_no: contact_no
-            },
-            success: function(response) {
-                if (response.exists) {
-                    if (response.email_exists) {
-                        alert('Email already exists');
-                        
-                    }
-                    if (response.contact_no_exists) {
-                        alert('Contact number already exists');
-                    }
-                } else {
-                    togglePopup();
-                }
-            },
-            error: function(xhr) {
-                console.error('Error:', xhr);
-                alert('An error occurred while checking the data.');
-            }
-        });
-    } else {
-        console.log('Form validation failed');
-    }
-}
 
         let otp;
 
         function togglePopup() {
-            
+
             // Get the contact number from the input field
             var contactNumber = $('#contact_no').val();
             console.log(contactNumber);
@@ -1375,14 +1542,19 @@ function validateAndSendOTP() {
         }
 
         // Function to open the first small popup
-        function openSmallPopup() {
-            $(".pop_up_div").hide();
-            $("#mobile_no").show();
-            $("#header_change").text('Forget Password');
 
-        }
 
-        function opensignin() {
+
+        // $(document).on('click','.forget',function() {
+        //     console.log('close');
+        //     // document.getElementById('smallPopup1').style.display = 'none';
+        //     $(".pop_up_div").hide();
+        //     $("#mobile_no").show();
+        //     $("#header_change").text('Forget Password');
+
+        // })
+
+        function opensiopensigningnin() {
             // console.log(1);
             $("#tab2").hide();
             $("#mobile_no").hide();
@@ -1395,6 +1567,7 @@ function validateAndSendOTP() {
         function openSmallPopupreg() {
             $(".pop_up_div").hide();
             $("#tab2").show();
+            $("#reg_form")[0].reset();
             // $("#header_change").text('Forget Password');
 
         }
@@ -1432,7 +1605,7 @@ function validateAndSendOTP() {
                 },
                 success: function(response) {
                     if (response.exists) {
-                        alert(response.data.error);
+                        // alert(response.data.error);
                         $('#mobileStatus').html('<span style="color:red;">Mobile number already exists</span>');
                     } else {
                         $('#mobileStatus').html('<span style="color:red;">Please Enter Number</span>');
@@ -1465,6 +1638,10 @@ function validateAndSendOTP() {
                         sendOtpRequest(contact, token);
                         $(".pop_up_div").hide();
                         $("#reset_otp").show();
+                        $("#otpInput1").val('');
+                        $("#otpInput2").val('');
+                        $("#otpInput3").val('');
+                        $("#otpInput4").val('');
                     } else {
                         // Mobile number does not exist, show an error
                         alert(response.data.error);
@@ -1512,12 +1689,65 @@ function validateAndSendOTP() {
         }
 
 
+        $(document).on('click', '.mfp-close', function() {
+            console.log('close');
+            // document.getElementById('smallPopup1').style.display = 'none';
+            $('#login_page').show();
+            $('#mobile_no').hide();
+            $('#reset_otp').hide();
+            $('#update_password').hide();
+            $('#tab2').hide();
 
+        })
 
         // to varify otp
+        // function verifyOtpforforgotpass() {
+        //     $(".pop_up_div").hide();
+        //     $("#update_password").show();
+        //     // Get the entered OTP
+        //     var enteredOtp = document.getElementById("otpInput1").value +
+        //         document.getElementById("otpInput2").value +
+        //         document.getElementById("otpInput3").value +
+        //         document.getElementById("otpInput4").value;
+
+        //     var token = document.querySelector('meta[name="csrf-token"]').content;
+
+
+        //     // Make an AJAX request to verify the OTP
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open("POST", "verify_otp_for_forgot_pass", true);
+        //     xhr.setRequestHeader("Content-Type", "application/json");
+        //     xhr.setRequestHeader("X-CSRF-TOKEN", token); // Include CSRF token
+
+
+        //     xhr.onreadystatechange = function() {
+        //         if (xhr.readyState == 4 && xhr.status == 200) {
+        //             var response = JSON.parse(xhr.responseText);
+
+        //             // Check if the entered OTP is valid
+        //             if (response.valid) {
+        //                 alert("OTP verification successful!");
+        //                 // Move to the next popup
+        //                 openSmallPopup3();
+        //             } else {
+        //             console.log(1);
+        //               $('#smallPopup2').show();
+        //                 // Display an error message or handle it accordingly
+        //                 alert("Invalid OTP. Please try again !!!!!!!.");
+        //                 $('#smallPopup2').show();
+        //             }
+        //         }
+        //     };
+        //     // ---------------------------------------------------------
+        //     // the below line doesnt work in online so i used another approach for this
+        //     // ----------------------------------------------------------
+        //     // Send the entered OTP to the server for verification
+        //     xhr.send(JSON.stringify({
+        //         enteredOtp: enteredOtp
+        //     }));
+        // }
+
         function verifyOtpforforgotpass() {
-            $(".pop_up_div").hide();
-            $("#update_password").show();
             // Get the entered OTP
             var enteredOtp = document.getElementById("otpInput1").value +
                 document.getElementById("otpInput2").value +
@@ -1526,13 +1756,11 @@ function validateAndSendOTP() {
 
             var token = document.querySelector('meta[name="csrf-token"]').content;
 
-
             // Make an AJAX request to verify the OTP
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "verify_otp_for_forgot_pass", true);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.setRequestHeader("X-CSRF-TOKEN", token); // Include CSRF token
-
 
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -1541,22 +1769,29 @@ function validateAndSendOTP() {
                     // Check if the entered OTP is valid
                     if (response.valid) {
                         alert("OTP verification successful!");
+                        $('#update_password').show();
                         // Move to the next popup
                         openSmallPopup3();
                     } else {
+                        console.log("Invalid OTP entered.");
                         // Display an error message or handle it accordingly
                         alert("Invalid OTP. Please try again.");
+                        $('#smallPopup2').show(); // Ensure the current popup stays open
                     }
                 }
             };
-            // ---------------------------------------------------------
-            // the below line doesnt work in online so i used another approach for this
-            // ----------------------------------------------------------
+
             // Send the entered OTP to the server for verification
             xhr.send(JSON.stringify({
                 enteredOtp: enteredOtp
             }));
         }
+
+        // Function to open Popup 3
+        // function openSmallPopup3() {
+        //     $('#smallPopup2').hide();
+        //     $('#update_password').show();
+        // }
 
         // Function to open the third small popup
         function openSmallPopup3() {
@@ -1565,9 +1800,9 @@ function validateAndSendOTP() {
         }
 
         // Function to close the third small popup
-        function closeSmallPopup3() {
-            document.getElementById('smallPopup3').style.display = 'none';
-        }
+        // function closeSmallPopup3() {
+        //     document.getElementById('smallPopup3').style.display = 'none';
+        // }
 
 
         function submitNewPasswordForm() {

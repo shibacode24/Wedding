@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\vendor\AddListing;
 use App\Models\website\Booking;
 use App\Models\admin\City;
+use App\Models\vendor\ListingAmenity;
+use App\Models\vendor\TimeSlot;
+use App\Models\vendor\VendorInformation;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -66,11 +69,35 @@ class ReportController extends Controller
      return view('admin.booking',compact('all_approve_booking','city'));
     }
 
- 
-    
     public function dashboard()
     {
-     return view('admin.dashboard');
+        // Get counts for each status
+        $enquiryCount = Booking::where('status', '0')->count();
+        $acceptCount = Booking::where('status', '1')->count();
+        $rejectCount = Booking::where('status', '2')->count();
+        // echo json_encode($rejectCount);'
+        // exit();
+    
+        return view('admin.dashboard', compact('enquiryCount', 'acceptCount', 'rejectCount'));
+    }
+    
+    // public function dashboard()
+    // {
+    //  return view('admin.dashboard');
+    // }
+
+
+    public function view_listing(Request $request)
+    {
+
+      $view_listing = AddListing ::where('id',$request->id)->first();
+      $vanue_type = ListingAmenity ::where('listing_id',$request->id)->get();
+      $time_slot = TimeSlot ::where('listing_id',$request->id)->get();
+      $vendor_information = VendorInformation ::where('add_listing_id',$request->id)->first();
+    //   echo json_encode($vendor_information);
+    //   exit();
+
+       return view('admin.view_listing',compact('view_listing','vanue_type','time_slot','vendor_information'));
     }
    
 }

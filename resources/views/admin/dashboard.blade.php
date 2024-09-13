@@ -1,4 +1,60 @@
-<style>
+@extends('admin.layout')
+
+@section('content')
+    <div>
+        {{-- <h1>Bookings Status Pie Chart</h1> --}}
+
+        <!-- Pie Chart -->
+        <canvas id="statusPieChart" style="width: 400px; height: 400px;"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('statusPieChart').getContext('2d');
+            var statusPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Enquiry', 'Accept', 'Reject'],
+                    datasets: [{
+                        data: [{{ $enquiryCount }}, {{ $acceptCount }}, {{ $rejectCount }}],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + ' times';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+@endsection
+
+
+
+
+
+
+{{-- <style>
 .pieID {
   display: inline-block;
   vertical-align: top;
@@ -189,4 +245,4 @@ function createPie(dataElement, pieElement) {
 createPie(".pieID.legend", ".pieID.pie");
 
 </script>
-@stop
+@stop --}}

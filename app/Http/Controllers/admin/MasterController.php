@@ -61,6 +61,19 @@ class MasterController extends Controller
         return redirect()->back()->with('success', 'City Updated Successfully');
     }
 
+
+    public function city_status(Request $request)
+        {
+            // dd($request->all());
+            $city = City::
+            where('id',$request->id)
+            ->update([
+            'status'=>$request->status
+            ]);
+            // session()->flash('msg','successfull');
+            return back();
+        }
+
     //end city
 
     public function category_store(Request $request){

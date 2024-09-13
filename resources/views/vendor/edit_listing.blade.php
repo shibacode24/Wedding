@@ -39,9 +39,11 @@
                                 <div class="row with-forms">
                                     <div class="col-md-3">
                                         <label>City</label>
+                                        {{-- {{app('request')->input('location_city')}} --}}
                                         <!-- <input type="text" class="form-control" placeholder="" value=""> -->
-                                        <select class="form-control" name="location_city">
+                                        <select class="form-control" name="location_city" id="select_city">
                                             <option disabled selected>Select</option>
+                                            <option value="other" {{ app('request')->input('location_city') == 'other' }}>Other</option>
                                             @foreach ($city as $citys)
                                                 <option value="{{ $citys->id }}"
                                                     {{ $edit_listing->location_city == $citys->id ? 'selected' : '' }}>
@@ -49,10 +51,16 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="col-md-3" id="other_city">
+                                        <label>Add City</label>
+                                        <input type="text" name="other_city" class="form-control"
+                                                    placeholder="" value="{{ $edit_listing->other_city }}">
+                                    </div>
+
                                     <div class="col-md-3">
                                         <label>Address for google map</label>
                                         <input type="text" name="location_address" class="form-control" placeholder=""
-                                            value="{{ $edit_listing->location_address }}">
+                                        id="address-input" value="{{ $edit_listing->location_address }}">
                                     </div>
 
                                 </div>
@@ -775,13 +783,7 @@
                     </div>
                 </div>
             </form>
-
-
             <div class="col-md-12" style="overflow:scroll">
-
-                <!-- START DEFAULT DATATABLE -->
-
-
 
             </div>
         </div>
@@ -790,9 +792,25 @@
 @stop
 
 @section('js')
-
     <script>
         $(document).ready(function() {
+            $('#other_city').hide();
+            console.log("Initial value:", $('#select_city').val());
+            if ($('#select_city').val() == null) {
+                $('#other_city').show(); // Show the div if 'other' is selected
+            } else {
+                $('#other_city').hide(); // Hide the div if any other option is selected
+            }
+
+            $('#select_city').change(function() {
+                console.log($(this).val());
+            if ($(this).val() == 'other') {
+                $('#other_city').show(); // Show the div if 'other' is selected
+            } else {
+                $('#other_city').hide(); // Hide the div if any other option is selected
+            }
+        });
+
             $(".add-row").click(function() {
 
                 var amenities_for_booking = $('#amenities_for_booking').val();
@@ -1048,5 +1066,24 @@
 
         });
     </script>
+   
+   <script>
+    function initAutocomplete() {
+        var input = document.getElementById('address-input');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.addListener('place_changed', function() {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                console.log("Place details not available for input: '" + place.name + "'");
+                return;
+            }
+            // Use place object for further processing
+            console.log("Selected place:", place);
+        });
+    }
+</script>
 
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1Cz13aBYAbBYJL0oABZ8KZnd7imiWwA4&libraries=places&callback=initAutocomplete"
+    async defer></script>
 @stop
